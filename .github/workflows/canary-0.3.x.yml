@@ -1,0 +1,104 @@
+name: canary-release-0.1.x
+
+on:
+    push:
+      branches:
+      - canary
+      paths:
+        - src/**
+        - tests/**
+        - package.json
+        - README.md
+        - tsconfig.json
+        - .github/workflows/canary*.yml
+
+jobs:
+    build_and_test:
+        continue-on-error: false
+        runs-on: ubuntu-latest
+    
+        container:
+            image: node:16-alpine3.17
+    
+        steps:
+        - uses: actions/checkout@v1
+
+
+
+
+        - name: Build
+          run: |
+            sed -e "s/{GITHUB_RUN_NUMBER}/.$GITHUB_RUN_NUMBER/g" package.json > package.json.bak && mv package.json.bak package.json
+            sed -e "s/{RELEASE_CHANNEL}/-$RELEASE_CHANNEL/g" package.json > package.json.bak && mv package.json.bak package.json
+            npm pkg get version
+            npm install
+            npm run build
+          env:
+            RELEASE_CHANNEL: canary
+            GITHUB_RUN_NUMBER: ${{ github.run_number }}
+          working-directory: ./
+    
+
+
+
+
+
+        - name: Test Memory Plugin
+          run: npm run test
+          working-directory: ./
+          env:
+            ALGOLIA_ENDPOINT: localhost:3000
+            ALGOLIA_PROTOCOL: http
+            ALGOLIA_APPLICATION_ID: SL5HHK6YT5
+            ALGOLIA_SECRET: ADMINKEY
+            ALGOLIA_READONLY_KEY: READKEY
+
+        - name: Test Algolia Live
+          run: npm run test
+          working-directory: ./
+          env:
+            ALGOLIA_ENDPOINT: SL5HHK6YT5.algolia.net
+            ALGOLIA_PROTOCOL: https
+            ALGOLIA_APPLICATION_ID: SL5HHK6YT5
+            ALGOLIA_SECRET: ${{ secrets.ALGOLIA_ADMIN_KEY }}
+            ALGOLIA_READONLY_KEY: ${{ secrets.ALGOLIA_READONLY_KEY }}
+
+        - name: 'Upload Artifact'
+          uses: actions/upload-artifact@v3
+          with:
+            name: dist-canary
+            path: |
+              dist
+              package.json
+              !dist/**/*.md
+            retention-days: 5
+
+    publish_canary:
+        if: true
+        needs: build_and_test
+        runs-on: ubuntu-latest
+
+        steps:
+          - uses: actions/checkout@v4
+          - uses: actions/setup-node@v3
+            with:
+              node-version: '20.x'
+              registry-url: 'https://registry.npmjs.org'
+
+          - name: Download a single artifact
+            uses: actions/download-artifact@v3
+            with:
+              name: dist-canary
+              path: ./
+         
+          - run: npm dist-tag ls
+            env:
+              NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+          - run: npm publish --access public --tag canary
+            env:
+              NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+          - run: npm dist-tag ls
+            env:
+              NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
