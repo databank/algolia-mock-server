@@ -10,7 +10,7 @@ on:
         - package.json
         - README.md
         - tsconfig.json
-        - .github/workflows/canary.yml
+        - .github/workflows/canary*.yml
 
 jobs:
     build_and_test:
