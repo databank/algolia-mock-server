@@ -446,7 +446,19 @@ describe("index.search()", () => {
 		/*
 
 		*/
-		const response13 = await index.search("", {});
+		const response13 = await index.search("", {
+			facets: [
+				'att1',
+				'author.name',
+				'authors.name',
+				'this.is.sparta',
+				'nulled',
+				'bool',
+				'number',
+				'attribute3', // filterOnly
+				'attribute5', // searchable, afterDistinct
+			],
+		});
 		console.log(JSON.stringify({ response13 }, null, "\t"))
 		//expect( response13.hits.length ).toBe(1);
 
