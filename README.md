@@ -4,7 +4,6 @@
 > :warning: **this package is work in progress** do not rely sole on it for unit testings!
 
 ![latest](https://github.com/databank/algolia-server-mock/actions/workflows/main.yml/badge.svg?branch=main)
-![beta](https://github.com/databank/algolia-server-mock/actions/workflows/beta-0.3.x.yml/badge.svg?branch=beta)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 
