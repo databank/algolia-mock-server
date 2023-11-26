@@ -435,28 +435,19 @@ export const extractFacetsFromObjects = ( objects: any[], attributesForFacetingR
 		const facetValues = Object.keys(returnableFacets[facetName])
 		const lowerCaseFacetValues = facetValues.map( f => f.toLowerCase())
 
-		console.log("checkig duplicates for ", facetName, facetValues )
-
 		facetValues.map((facetValue, index, array ) => {
 			if ( lowerCaseFacetValues.indexOf(facetValue.toLowerCase()) === index)
 				return;
 
-			// found duplicate at a different index
-			console.log("found duplicate for", facetValue )
 			const targetIndex = lowerCaseFacetValues.indexOf(facetValue.toLowerCase())
 
-			console.log("will add it to ", facetValues[targetIndex] )
 			// sum it
 			returnableFacets[facetName][facetValues[targetIndex]] += returnableFacets[facetName][facetValues[index]];
 
 			// delete duplicate
 			delete returnableFacets[facetName][facetValues[index]];
-
-			//returnableFacets[facetName][]
 			
 		})
-		
-		//if array.map( v => v.toLowerCase() ).indexOf(value.toLowerCase()) === index;
 	})
 
 	// @todo: facet sorting

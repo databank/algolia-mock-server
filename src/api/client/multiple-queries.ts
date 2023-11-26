@@ -120,7 +120,8 @@ import {
 	applyAttributesToRetrieve, 
 	applyUnretrievableAttributes, 
 	applyQueryTermToAllObjects,
-	applyFacetFiltersToAllObjects 
+	applyFacetFiltersToAllObjects,
+	extractFacetsFromObjects
 } from "../utils";
 import { defaultHeaders, defaultHitsPerPage } from "../../constants";
 
@@ -174,6 +175,7 @@ export const multipleQueries = async (storage:any, { indexName }: any, event: an
 			page: clientPage,
 			hitsPerPage: clientHitsPerPage,
 			facetFilters: clientFacetFilters,
+			facets: clientFacets,
 		} = qp;
 		let facetFilters;
 		if (typeof clientFacetFilters === "string") {
@@ -206,9 +208,9 @@ export const multipleQueries = async (storage:any, { indexName }: any, event: an
 			clientAttributesToRetrieve = JSON.parse(attributesToRetrieve);
 		}
 
-		// @todo: count facets for remaining data
-
-
+		let facets;
+		if ((clientFacets || []).length)
+			facets = extractFacetsFromObjects(objects, attributesForFaceting || [], clientFacets );
 
 
 
@@ -253,7 +255,7 @@ export const multipleQueries = async (storage:any, { indexName }: any, event: an
 		results.push({
 			hits: objects,
 			nbHits,
-			//facets,
+			facets,
 			page,
 			nbPages,
 			hitsPerPage,

@@ -450,6 +450,26 @@ describe("client.multipleQueries", () => {
 				}
 			},
 
+			/*
+				facets
+			*/
+			{
+				indexName,
+				params: {
+					facets: [
+						'att1',
+						'author.name',
+						'authors.name',
+						'this.is.sparta',
+						'nulled',
+						'bool',
+						'number',
+						' filterOnly ( attribute3 ) ',
+						' afterDistinct ( searchable ( attribute5 ) ) ',
+					]
+				}
+			},
+
 		];
 
 		const response:any = await adminClient.multipleQueries(queries);
@@ -465,6 +485,16 @@ describe("client.multipleQueries", () => {
 		expect( response.results[9].hits.length ).toBe(1);
 		expect( response.results[10].hits.length ).toBe(1);
 		expect( response.results[11].hits.length ).toBe(1);
+
+		const { facets } = response.results[12];
+
+		expect( facets.att1.hello ).toBe(1);             // simple string
+		expect( facets.bool.true ).toBe(1);              // boolean
+		expect( facets.number["1"] ).toBe(1);            // number
+		expect( facets["author.name"].James ).toBe(1);   // nested object
+		expect( facets["this.is.sparta"].yey ).toBe(1);  // more complex case with object in array
+
+		//console.log(JSON.stringify({ facets }, null, "\t"))
 	})
 
 	// @todo: test multipleQueries on inexistent index

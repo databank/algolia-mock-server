@@ -474,7 +474,7 @@ describe("index.search()", () => {
 				'attribute5', // searchable, afterDistinct
 			],
 		});
-		console.log(JSON.stringify({ response14 }, null, "\t"))
+
 		const bondFacetName = response14.facets["authors.name"].Bond || response14.facets["authors.name"].BonD;
 		expect( response14.facets.att1.hello ).toBe(1);             // simple string
 		expect( response14.facets.bool.true ).toBe(1);              // boolean
@@ -484,7 +484,7 @@ describe("index.search()", () => {
 		expect( bondFacetName).toBe(2);                             // nested array
 
 
-		expect( response14.facets.nulled ).toBeUndefined()                  // null should not be faceted
+		expect( response14.facets.nulled ).toBeUndefined()          // null should not be faceted
 
 		index.delete()
 
