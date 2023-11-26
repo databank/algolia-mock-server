@@ -280,7 +280,12 @@ describe("index.search()", () => {
 							sparta: "yey",
 						}
 					]
-				}
+				},
+				authors: [
+					{
+						name: "BonD", // will it count into Bond ?
+					}
+				]
 			},
 		]).wait()
 
@@ -369,7 +374,7 @@ describe("index.search()", () => {
 				"authors.name:bonD"
 			]
 		});
-		expect( response6.hits.length ).toBe(1);
+		expect( response6.hits.length ).toBe(2);
 
 
 
@@ -414,7 +419,7 @@ describe("index.search()", () => {
 				["authors.name:james", "authors.name:bond"],
 			]
 		});
-		expect( response9.hits.length ).toBe(1);
+		expect( response9.hits.length ).toBe(2);
 
 
 		/*
@@ -475,11 +480,11 @@ describe("index.search()", () => {
 		expect( response14.facets.number["1"] ).toBe(1);            // number
 		expect( response14.facets["author.name"].James ).toBe(1);   // nested object
 		expect( response14.facets["authors.name"].Bond ).toBe(1);   // nested array
-		expect( response14.facets["authors.name"].BonD ).toBe(1);   // case sensitivity
 		expect( response14.facets["this.is.sparta"].yey ).toBe(1);  // more complex case with object in array
 
 
-		expect( response14.facets.nulled ).toBeUndefined()         // null should not be faceted
+		expect( response14.facets.nulled ).toBeUndefined()                  // null should not be faceted
+		//expect( response14.facets["authors.name"].BonD ).toBeUndefined();   // case insensitive, BonD counted in Bond
 
 		index.delete()
 

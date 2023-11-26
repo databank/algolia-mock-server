@@ -348,7 +348,11 @@ const extractValueFromObject = ( o:any, path:string ):any => {
 				valueList.push( deepValue )
 			}
 		})
-		return valueList;
+
+		// remove duplicated , case insensitive, dont keep both Bond and BonD
+		return valueList.filter((value, index, array) => {
+			return array.map( v => v.toLowerCase() ).indexOf(value.toLowerCase()) === index;
+		})
 	}
 
 	if (typeof o === "object") {
@@ -376,7 +380,7 @@ const extractValueFromObject = ( o:any, path:string ):any => {
 	[x] use attributesForFaceting
 	[x] intersect facts parameter
 	[x] case sensitive facet values
-	[ ] do not return empty facets
+	[x] do not return empty facets
 */
 export const extractFacetsFromObjects = ( objects: any[], attributesForFacetingRaw: string[], clientFacets: string[] ) => {
 	// populate facets
