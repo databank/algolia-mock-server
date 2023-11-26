@@ -456,7 +456,7 @@ describe("index.search()", () => {
 		/*
 
 		*/
-		const response13 = await index.search("", {
+		const response14:any = await index.search("", {
 			facets: [
 				'att1',
 				'author.name',
@@ -469,10 +469,17 @@ describe("index.search()", () => {
 				'attribute5', // searchable, afterDistinct
 			],
 		});
-		console.log(JSON.stringify({ response13 }, null, "\t"))
-		//expect( response13.hits.length ).toBe(1);
+		console.log(JSON.stringify({ response14 }, null, "\t"))
+		expect( response14.facets.att1.hello ).toBe(1);             // simple string
+		expect( response14.facets.bool.true ).toBe(1);              // boolean
+		expect( response14.facets.number["1"] ).toBe(1);            // number
+		expect( response14.facets["author.name"].James ).toBe(1);   // nested object
+		expect( response14.facets["authors.name"].Bond ).toBe(1);   // nested array
+		expect( response14.facets["authors.name"].BonD ).toBe(1);   // case sensitivity
+		expect( response14.facets["this.is.sparta"].yey ).toBe(1);  // more complex case with object in array
 
 
+		expect( response14.facets.nulled ).toBeUndefined()         // null should not be faceted
 
 		index.delete()
 

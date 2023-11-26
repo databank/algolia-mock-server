@@ -343,7 +343,7 @@ const extractValueFromObject = ( o:any, path:string ):any => {
 		o.map((oValue) => {
 			let deepValue = extractValueFromObject(oValue, path )
 			if (Array.isArray(deepValue)) {
-				valueList = Array.from(new Set([ ...valueList, deepValue ])); // Algolia only countrs values once
+				valueList = [ ...valueList, deepValue ];
 			} else {
 				valueList.push( deepValue )
 			}
@@ -375,7 +375,8 @@ const extractValueFromObject = ( o:any, path:string ):any => {
 /*
 	[x] use attributesForFaceting
 	[x] intersect facts parameter
-	[ ] case sensitive facet values ?
+	[x] case sensitive facet values
+	[ ] do not return empty facets
 */
 export const extractFacetsFromObjects = ( objects: any[], attributesForFacetingRaw: string[], clientFacets: string[] ) => {
 	// populate facets
@@ -390,7 +391,6 @@ export const extractFacetsFromObjects = ( objects: any[], attributesForFacetingR
 		retrievableFacets.map((facetName:any) => {
 			
 			const facetValue = extractValueFromObject( Item, facetName )
-			console.log(facetName, "=", facetValue );
 
 			if (!facets[facetName])
 				facets[facetName] = {}
@@ -406,7 +406,8 @@ export const extractFacetsFromObjects = ( objects: any[], attributesForFacetingR
 
 			if (Array.isArray(facetValue)) {
 
-				facetValue.map(( fv ) => {
+				// only count values once
+				Array.from(new Set(facetValue)).map(( fv ) => {
 					if (!facets[facetName].hasOwnProperty(fv))
 						facets[facetName][fv.toString()] = 0;
 
@@ -416,8 +417,14 @@ export const extractFacetsFromObjects = ( objects: any[], attributesForFacetingR
 		})
 	})
 
+	let returnableFacets:any = {}
+	Object.keys(facets).map((facet) => {
+		if (Object.keys(facets[facet]).length)
+			returnableFacets[facet] = facets[facet]
+	})
 
+	// @todo: facet sorting
 
-	return facets;
+	return returnableFacets;
 
 }
