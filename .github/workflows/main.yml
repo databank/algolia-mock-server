@@ -62,7 +62,7 @@ jobs:
             ALGOLIA_ENDPOINT: SL5HHK6YT5.algolia.net
             ALGOLIA_PROTOCOL: https
             ALGOLIA_APPLICATION_ID: SL5HHK6YT5
-            ALGOLIA_SECRET: ${{ secrets.ALGOLIA_SECRET }}
+            ALGOLIA_SECRET: ${{ secrets.ALGOLIA_ADMIN_KEY }}
             ALGOLIA_READONLY_KEY: ${{ secrets.ALGOLIA_READONLY_KEY }}
 
         - name: 'Upload Artifact'
