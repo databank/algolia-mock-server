@@ -1,13 +1,10 @@
 {
     "name": "@databank/algolia-mock-server",
-    "version": "0.2.0{RELEASE_CHANNEL}{GITHUB_RUN_NUMBER}",
+    "version": "0.3.0{RELEASE_CHANNEL}{GITHUB_RUN_NUMBER}",
     "license": "MIT",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
-    "dependencies": {
-        "@aws-sdk/client-dynamodb": "^3.449.0",
-        "@aws-sdk/lib-dynamodb": "^3.449.0"
-    },
+    "dependencies": {},
     "devDependencies": {
         "@jest/globals": "29.5.0",
         "@types/jest": "^27.5.2",

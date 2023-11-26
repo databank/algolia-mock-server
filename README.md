@@ -4,8 +4,8 @@
 > :warning: **this package is work in progress** do not rely sole on it for unit testings!
 
 ![latest](https://github.com/databank/algolia-server-mock/actions/workflows/main.yml/badge.svg?branch=main)
-![beta](https://github.com/databank/algolia-server-mock/actions/workflows/beta-0.2.x.yml/badge.svg?branch=beta)
-![canary](https://github.com/databank/algolia-server-mock/actions/workflows/canary-0.2.x.yml/badge.svg?branch=canary)
+![beta](https://github.com/databank/algolia-server-mock/actions/workflows/beta-0.3.x.yml/badge.svg?branch=beta)
+![canary](https://github.com/databank/algolia-server-mock/actions/workflows/canary-0.3.x.yml/badge.svg?branch=canary)
 
 algolia-mock-server is a personal effort to create an `algoliasearch` compatible server counterpart that mimics the functionality of Algolia REST Api.
 
