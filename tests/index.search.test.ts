@@ -253,6 +253,9 @@ describe("index.search()", () => {
 					{
 						name: "Bond",
 					},
+					{
+						name: "Bond", // will Algolia count "Bond" twice ?
+					},
 				],
 
 			},

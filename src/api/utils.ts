@@ -386,15 +386,16 @@ export const extractFacetsFromObjects = ( objects: any[], attributesForFacetingR
 			const facetValue = extractValueFromObject( Item, facetName )
 			console.log(facetName, "=", facetValue );
 
-			if (typeof facetValue === "string") {
+			if (["string","boolean", "number"].includes(typeof facetValue)) {
 				if (!facets[facetName])
 					facets[facetName] = {}
 
 				if (!facets[facetName].hasOwnProperty(facetValue))
-					facets[facetName][facetValue] = 0;
+					facets[facetName][facetValue.toString()] = 0;
 
-				facets[facetName][facetValue]++;
+				facets[facetName][facetValue.toString()]++;
 			}
+
 
 // 			if (Array.isArray(Item[facetName])) {
 // 				Item[facetName].map((facetValue:any) => {
