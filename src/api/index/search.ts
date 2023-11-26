@@ -127,6 +127,7 @@ import {
 	applyUnretrievableAttributes, 
 	applyQueryTermToAllObjects,
 	applyFacetFiltersToAllObjects,
+	extractFacetsFromObjects,
 } from "../utils";
 
 export const searchRegex = /^\/1\/indexes\/(?<indexName>[^\/]+)\/query$/
@@ -154,6 +155,7 @@ export const searchPost = async (storage:any, { indexName }: any, event: any ) =
 		hitsPerPage : clientHitsPerPage,
 		attributesToRetrieve,
 		facetFilters,
+		facets: clientFacets,
 	} = payload;
 
 	const indexSettings = await storage.getIndex( indexName );
@@ -171,16 +173,10 @@ export const searchPost = async (storage:any, { indexName }: any, event: any ) =
 	if (Array.isArray(facetFilters) && facetFilters.length )
 		objects = applyFacetFiltersToAllObjects( objects, facetFilters, attributesForFaceting || [] );
 
-
-
-
-
-
-
-
-
-
-
+	// count facets for remaining data
+	let facets;
+	if ((clientFacets || []).length)
+		facets = extractFacetsFromObjects(objects, attributesForFaceting || [], clientFacets );
 
 
 	// attributesToRetrieve
@@ -219,6 +215,7 @@ export const searchPost = async (storage:any, { indexName }: any, event: any ) =
 		body: JSON.stringify({
 			hits: objects,
 			nbHits,
+			facets,
 			page,
 			nbPages,
 			hitsPerPage,

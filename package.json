@@ -1,6 +1,6 @@
 {
     "name": "@databank/algolia-mock-server",
-    "version": "0.3.0{RELEASE_CHANNEL}{GITHUB_RUN_NUMBER}",
+    "version": "0.4.0{RELEASE_CHANNEL}{GITHUB_RUN_NUMBER}",
     "description": "Algolia REST Api compatible server for unit tests",
     "author": "Adrian Praja",
     "license": "MIT",

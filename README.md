@@ -4,10 +4,11 @@
 > :warning: **this package is work in progress** do not rely sole on it for unit testings!
 
 ![latest](https://github.com/databank/algolia-server-mock/actions/workflows/main.yml/badge.svg?branch=main)
-![beta](https://github.com/databank/algolia-server-mock/actions/workflows/beta-0.3.x.yml/badge.svg?branch=beta)
-![canary](https://github.com/databank/algolia-server-mock/actions/workflows/canary-0.3.x.yml/badge.svg?branch=canary)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-algolia-mock-server is a personal effort to create an `algoliasearch` compatible server counterpart that mimics the functionality of Algolia REST Api.
+
+algolia-mock-server is a personal effort to create an `algoliasearch` compatible
+server counterpart that mimics the functionality of Algolia REST Api.
 
 It is primarely ment for unit testing in TypeScript projects.
 

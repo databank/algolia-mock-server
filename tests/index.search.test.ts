@@ -225,7 +225,7 @@ describe("index.search()", () => {
 
 	});
 
-	test('facetFilters', async () => {
+	test('facetFilters, facets', async () => {
 
 		const index = adminClient.initIndex('test-search-facetFilters');
 
@@ -253,6 +253,16 @@ describe("index.search()", () => {
 					{
 						name: "Bond",
 					},
+					{
+						name: "Bond", // Algolia will count "Bond" only once
+					},
+					{
+						name: "BonD", // test Algolia facet value case behavior
+					},
+					{
+						name: "0.0.7",
+					},
+
 				],
 
 			},
@@ -270,7 +280,12 @@ describe("index.search()", () => {
 							sparta: "yey",
 						}
 					]
-				}
+				},
+				authors: [
+					{
+						name: "BonD", // will it count into Bond ?
+					}
+				]
 			},
 		]).wait()
 
@@ -359,7 +374,7 @@ describe("index.search()", () => {
 				"authors.name:bonD"
 			]
 		});
-		expect( response6.hits.length ).toBe(1);
+		expect( response6.hits.length ).toBe(2);
 
 
 
@@ -404,7 +419,7 @@ describe("index.search()", () => {
 				["authors.name:james", "authors.name:bond"],
 			]
 		});
-		expect( response9.hits.length ).toBe(1);
+		expect( response9.hits.length ).toBe(2);
 
 
 		/*
@@ -442,8 +457,36 @@ describe("index.search()", () => {
 
 
 
+
+		/*
+
+		*/
+		const response14:any = await index.search("", {
+			facets: [
+				'att1',
+				'author.name',
+				'authors.name',
+				'this.is.sparta',
+				'nulled',
+				'bool',
+				'number',
+				'attribute3', // filterOnly
+				'attribute5', // searchable, afterDistinct
+			],
+		});
+
+		const bondFacetName = response14.facets["authors.name"].Bond || response14.facets["authors.name"].BonD;
+		expect( response14.facets.att1.hello ).toBe(1);             // simple string
+		expect( response14.facets.bool.true ).toBe(1);              // boolean
+		expect( response14.facets.number["1"] ).toBe(1);            // number
+		expect( response14.facets["author.name"].James ).toBe(1);   // nested object
+		expect( response14.facets["this.is.sparta"].yey ).toBe(1);  // more complex case with object in array
+		expect( bondFacetName).toBe(2);                             // nested array
+
+
+		expect( response14.facets.nulled ).toBeUndefined()          // null should not be faceted
+
 		index.delete()
 
 	})
-
 })

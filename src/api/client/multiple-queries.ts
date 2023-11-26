@@ -120,7 +120,8 @@ import {
 	applyAttributesToRetrieve, 
 	applyUnretrievableAttributes, 
 	applyQueryTermToAllObjects,
-	applyFacetFiltersToAllObjects 
+	applyFacetFiltersToAllObjects,
+	extractFacetsFromObjects
 } from "../utils";
 import { defaultHeaders, defaultHitsPerPage } from "../../constants";
 
@@ -174,6 +175,7 @@ export const multipleQueries = async (storage:any, { indexName }: any, event: an
 			page: clientPage,
 			hitsPerPage: clientHitsPerPage,
 			facetFilters: clientFacetFilters,
+			facets: clientFacets,
 		} = qp;
 		let facetFilters;
 		if (typeof clientFacetFilters === "string") {
@@ -206,42 +208,9 @@ export const multipleQueries = async (storage:any, { indexName }: any, event: an
 			clientAttributesToRetrieve = JSON.parse(attributesToRetrieve);
 		}
 
-		// // populate facets
-		// let facets:any = {}
-
-		// if (indexObject?.attributesForFaceting) {
-		// 	response.Items.map((Item) => {
-		// 		indexObject.attributesForFaceting.map((facetName:any) => {
-		// 			if (typeof Item[facetName] === "string") {
-		// 				if (!facets[facetName])
-		// 					facets[facetName] = {}
-					
-		// 				if (!facets[facetName].hasOwnProperty(Item[facetName])) {
-		// 					facets[facetName][Item[facetName]] = 0;
-		// 				}
-
-		// 				facets[facetName][Item[facetName]]++;
-		// 			}
-
-		// 			if (Array.isArray(Item[facetName])) {
-		// 				Item[facetName].map((facetValue:any) => {
-		// 					if (!facets[facetName])
-		// 						facets[facetName] ={}
-
-		// 					if (!facets[facetName].has0wnProperty(facetValue)) {
-		// 						facets[facetName][facetValue] = 0
-		// 					}
-							
-		// 					facets[facetName][facetValue]++;
-		// 				})
-		// 			}
-		// 		})
-		// 	})
-		// }
-
-
-
-
+		let facets;
+		if ((clientFacets || []).length)
+			facets = extractFacetsFromObjects(objects, attributesForFaceting || [], clientFacets );
 
 
 
@@ -286,7 +255,7 @@ export const multipleQueries = async (storage:any, { indexName }: any, event: an
 		results.push({
 			hits: objects,
 			nbHits,
-			//facets,
+			facets,
 			page,
 			nbPages,
 			hitsPerPage,

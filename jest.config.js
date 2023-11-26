@@ -19,8 +19,8 @@ module.exports = {
   testPathIgnorePatterns: [ "/node_modules/"],
   testTimeout: 20000,
 
-  // collectCoverage: false,
-  // coverageDirectory: "coverage",
+  collectCoverage: true,
+  coverageDirectory: "coverage",
   bail: true,
   verbose: true,
 

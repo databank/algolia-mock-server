@@ -329,3 +329,129 @@ export const applyFacetFiltersToAllObjects = ( objects: any[], facetFilters: any
 		return keep;
 	})
 }
+
+
+
+
+const extractValueFromObject = ( o:any, path:string ):any => {
+
+	if ( o === null || ["boolean", "number", "string"].includes(typeof o) )
+		return o;
+
+	if (Array.isArray(o)) {
+		let valueList: any[] = []
+		o.map((oValue) => {
+			let deepValue = extractValueFromObject(oValue, path )
+			if (Array.isArray(deepValue)) {
+				valueList = [ ...valueList, deepValue ];
+			} else {
+				valueList.push( deepValue )
+			}
+		})
+
+		// remove duplicated , case insensitive, dont keep both Bond and BonD
+		return valueList.filter((value, index, array) => {
+			return array.map( v => v.toLowerCase() ).indexOf(value.toLowerCase()) === index;
+		})
+	}
+
+	if (typeof o === "object") {
+
+		const objectAttributes = Object.keys(o);
+		if (objectAttributes.includes(path))
+			return o[path];
+
+		const [ k_left ] = path.split(".");
+		const   k_right = path.split(".").slice(1).join(".")
+
+		if ( path === k_left )
+			return;
+
+		if (!k_right)
+			return;
+
+		return extractValueFromObject( o[k_left], k_right )
+	}
+
+	return;
+
+}
+/*
+	[x] use attributesForFaceting
+	[x] intersect facts parameter
+	[x] case sensitive facet values
+	[x] do not return empty facets
+*/
+export const extractFacetsFromObjects = ( objects: any[], attributesForFacetingRaw: string[], clientFacets: string[] ) => {
+	// populate facets
+	let facets:any = {}
+
+	const attributesForFaceting = extractAttributesForFaceting(attributesForFacetingRaw)
+
+	const retrievableFacets = Object.keys(attributesForFaceting).filter(clientFacet => clientFacets.includes(clientFacet));
+
+	objects.map((Item) => {
+
+		retrievableFacets.map((facetName:any) => {
+			
+			const facetValue = extractValueFromObject( Item, facetName )
+
+			if (!facets[facetName])
+				facets[facetName] = {}
+
+			if (["string","boolean", "number"].includes(typeof facetValue)) {
+
+				if (!facets[facetName].hasOwnProperty(facetValue))
+					facets[facetName][facetValue.toString()] = 0;
+
+				facets[facetName][facetValue.toString()]++;
+			}
+
+
+			if (Array.isArray(facetValue)) {
+
+				// only count values once
+				Array.from(new Set(facetValue)).map(( fv ) => {
+					if (!facets[facetName].hasOwnProperty(fv))
+						facets[facetName][fv.toString()] = 0;
+
+					facets[facetName][fv.toString()]++;
+				})
+			}
+		})
+	})
+
+	let returnableFacets:any = {}
+
+	// remove empty facets {}
+	Object.keys(facets).map((facet) => {
+		if (Object.keys(facets[facet]).length)
+			returnableFacets[facet] = facets[facet]
+	})
+
+	// at this point we might have both Bond and BonD
+	// sum facets case insensitive and return only one
+	Object.keys(returnableFacets).map((facetName) => {
+		const facetValues = Object.keys(returnableFacets[facetName])
+		const lowerCaseFacetValues = facetValues.map( f => f.toLowerCase())
+
+		facetValues.map((facetValue, index, array ) => {
+			if ( lowerCaseFacetValues.indexOf(facetValue.toLowerCase()) === index)
+				return;
+
+			const targetIndex = lowerCaseFacetValues.indexOf(facetValue.toLowerCase())
+
+			// sum it
+			returnableFacets[facetName][facetValues[targetIndex]] += returnableFacets[facetName][facetValues[index]];
+
+			// delete duplicate
+			delete returnableFacets[facetName][facetValues[index]];
+			
+		})
+	})
+
+	// @todo: facet sorting
+
+	return returnableFacets;
+
+}
