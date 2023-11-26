@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+      "strict": true,
       "skipLibCheck": true,
       // "skipDefaultLibCheck": true,
       "rootDir": "src",
@@ -12,7 +13,7 @@
       "lib": ["ES2018"],
       
       "declaration": true, // emits .d.ts, usable by users using the library
-      "strict": true,
+
       "noImplicitAny": true,
       "strictNullChecks": true,
       "noImplicitThis": true,
