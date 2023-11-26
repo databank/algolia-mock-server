@@ -1,6 +1,8 @@
 {
     "name": "@databank/algolia-mock-server",
     "version": "0.3.0{RELEASE_CHANNEL}{GITHUB_RUN_NUMBER}",
+    "description": "Algolia REST Api compatible server for unit tests",
+    "author": "Adrian Praja",
     "license": "MIT",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -15,7 +17,14 @@
         "jest-junit": "^16.0.0",
         "ts-node": "^10.8.1",
         "ts-jest": "^27.1.4",
-		"typescript": "4.9"
+        "typescript": "4.9"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/databank/algolia-mock-server.git"
+    },
+    "bugs": {
+        "url": "https://github.com/databank/algolia-mock-server/issues"
     },
     "scripts": {
         "build": "tsc",
