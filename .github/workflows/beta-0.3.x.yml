@@ -1,0 +1,120 @@
+name: beta-release
+
+on:
+    push:
+      branches:
+      - beta
+      paths:
+        - src/**
+        - tests/**
+        - package.json
+        - README.md
+        - tsconfig.json
+
+jobs:
+    build_and_test:
+        continue-on-error: false
+        runs-on: ubuntu-latest
+    
+        container:
+            image: node:16-alpine3.17
+    
+        steps:
+        - uses: actions/checkout@v1
+        # - run: apk add --no-cache --virtual .gyp python make g++
+        # - run: apk add --update zip python python-dev py-pip build-base
+
+        - run: npm pkg get version
+        - name: Dynamic Run Number
+          run: sed -e "s/{GITHUB_RUN_NUMBER}/.$GITHUB_RUN_NUMBER/g" package.json > package.json.bak && mv package.json.bak package.json
+          env:
+            GITHUB_RUN_NUMBER: ${{ github.run_number }}
+
+        - name: Dynamic Release Name
+          run: sed -e "s/{RELEASE_CHANNEL}/-$RELEASE_CHANNEL/g" package.json > package.json.bak && mv package.json.bak package.json
+          env:
+            RELEASE_CHANNEL: beta
+
+        - run: cat package.json
+        - run: npm pkg get version
+
+        - run: npm install
+          working-directory: ./
+    
+        - run: npm run build
+          working-directory: ./
+
+        - run: find | sed 's|[^/]*/|- |g'
+          working-directory: ./dist
+
+
+        - name: Test Memory Plugin
+          run: npm run test
+          working-directory: ./
+          env:
+            ALGOLIA_ENDPOINT: localhost:3000
+            ALGOLIA_PROTOCOL: http
+            ALGOLIA_APPLICATION_ID: SL5HHK6YT5
+            ALGOLIA_SECRET: ADMINKEY
+            ALGOLIA_READONLY_KEY: READKEY
+
+        - name: Test Algolia Live
+          run: npm run test
+          working-directory: ./
+          env:
+            ALGOLIA_ENDPOINT: SL5HHK6YT5.algolia.net
+            ALGOLIA_PROTOCOL: https
+            ALGOLIA_APPLICATION_ID: SL5HHK6YT5
+            ALGOLIA_SECRET: ${{ secrets.ALGOLIA_ADMIN_KEY }}
+            ALGOLIA_READONLY_KEY: ${{ secrets.ALGOLIA_READONLY_KEY }}
+
+        - name: 'Upload Artifact'
+          uses: actions/upload-artifact@v3
+          with:
+            name: dist-beta
+            path: |
+              dist
+              package.json
+              !dist/**/*.md
+            retention-days: 5
+
+    publish_beta:
+        if: true
+        needs: build_and_test
+        runs-on: ubuntu-latest
+
+        steps:
+          - uses: actions/checkout@v4
+          - uses: actions/setup-node@v3
+            with:
+              node-version: '20.x'
+              registry-url: 'https://registry.npmjs.org'
+
+          - name: Download a single artifact
+            uses: actions/download-artifact@v3
+            with:
+              name: dist-beta
+              path: ./
+
+          - name: 'Echo download path'
+            run: echo ${{steps.download.outputs.download-path}}
+
+          - name: 'Echo download path'
+            run: printenv DOWNLOAD_PATH
+            env: 
+              DOWNLOAD_PATH: ${{steps.download.outputs.download-path}}
+
+          - name: Display structure of downloaded files
+            run: pwd && ls -R
+            working-directory: ${{steps.download.outputs.download-path}}
+
+          
+          - run: cat package.json
+          - run: ls -R
+          - run: find | sed 's|[^/]*/|- |g'
+          #- run: npm ci
+          # - run: npm install --production
+
+          - run: npm publish --access public --tag beta
+            env:
+              NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
