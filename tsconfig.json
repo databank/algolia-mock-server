@@ -1,0 +1,65 @@
+{
+    "compilerOptions": {
+      "skipLibCheck": true,
+      // "skipDefaultLibCheck": true,
+      "rootDir": "src",
+
+
+      "target": "ES2018",
+      "module": "CommonJS",
+      "outDir": "dist/",
+
+      "lib": ["ES2018"],
+      
+      "declaration": true, // emits .d.ts, usable by users using the library
+      "strict": true,
+      "noImplicitAny": true,
+      "strictNullChecks": true,
+      "noImplicitThis": true,
+      "alwaysStrict": true,
+      "noUnusedLocals": false,
+      "noUnusedParameters": false,
+      "noImplicitReturns": true,
+      "noFallthroughCasesInSwitch": false,
+      "inlineSourceMap": true,
+      "inlineSources": true,
+      "experimentalDecorators": true,
+      "strictPropertyInitialization": true,
+      "typeRoots": [
+        "./node_modules/@types",
+        "jest"
+      ],
+
+
+
+      // "moduleResolution": "node",
+      // "esModuleInterop": true,
+
+      // "isolatedModules": true,
+
+      // "types": [
+      //   "node",
+      //   "jest"
+      // ],
+
+
+      // "noEmitOnError": true,
+      // "noEmit": false,
+
+
+
+      // "removeComments": false,
+      // "sourceMap": false,
+
+      // "baseUrl": ".",
+    },
+    "include": [
+      "src/**/*.ts",
+    ],
+    "exclude": [
+      "node_modules", 
+      "dist", 
+      "__generated__",
+      "src/**/*.test.ts"
+    ]
+  }
