@@ -1,11 +1,11 @@
 
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, GetCommand, PutCommand, QueryCommand, DeleteCommand } from "@aws-sdk/lib-dynamodb";
+// import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+// import { DynamoDBDocumentClient, GetCommand, PutCommand, QueryCommand, DeleteCommand } from "@aws-sdk/lib-dynamodb";
 // import { DynamoDBDocumentClient, GetCommand, QueryCommandInput, UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
 
 export const mockStorageDynamoDB = () => {
-	const client = new DynamoDBClient({});
-	const docClient = DynamoDBDocumentClient.from(client);
+	// const client = new DynamoDBClient({});
+	// const docClient = DynamoDBDocumentClient.from(client);
 
 	return {
 		getIndex: async ( index: string ) => {
@@ -32,21 +32,21 @@ export const mockStorageDynamoDB = () => {
 			return indexObject;
 		},
 		getObject: async ( index:string, objectID:string ) => {
-			console.log(`dynamodb.getObject( ${index}, ${objectID} )`)
-			const command = new GetCommand ({
-				TableName: "algolia_mock_objects",
-				Key: {
-					index, 
-					objectID,
-				}
-			});
+			// console.log(`dynamodb.getObject( ${index}, ${objectID} )`)
+			// const command = new GetCommand ({
+			// 	TableName: "algolia_mock_objects",
+			// 	Key: {
+			// 		index, 
+			// 		objectID,
+			// 	}
+			// });
 
-			let response = await docClient.send(command);
+			// let response = await docClient.send(command);
 
-			if (!response?.Item)
-				return false;
+			// if (!response?.Item)
+			// 	return false;
 
-			return {...response?.Item, ...{index: undefined }}
+			// return {...response?.Item, ...{index: undefined }}
 		},
 		getAllObjects: async ( index:string ) => {
 			console.log(`dynamodb.getAllObjects( ${index} )`)
@@ -91,62 +91,62 @@ export const mockStorageDynamoDB = () => {
 		deleteAllObjects: async ( index:string ) => {
 			console.log(`dynamodb.deleteAllObjects( ${index} )`)
 
-			let response;
-			const command = new QueryCommand({
-				TableName: "algolia mock_objects",
-				KeyConditionExpression: '#index = :index',
-				ExpressionAttributeNames: {
-					'#index': 'index',
-				},
-				ExpressionAttributeValues: {
-					index,
-				},
-			});
+			// let response;
+			// const command = new QueryCommand({
+			// 	TableName: "algolia mock_objects",
+			// 	KeyConditionExpression: '#index = :index',
+			// 	ExpressionAttributeNames: {
+			// 		'#index': 'index',
+			// 	},
+			// 	ExpressionAttributeValues: {
+			// 		index,
+			// 	},
+			// });
 
 
-			response = await docClient.send(command);
+			// response = await docClient.send(command);
 
-			if (response.Items?.length) {
-				for (const Item of response.Items) {
-					const dc = new DeleteCommand({
-						TableName: "algolia_mock_objects",
-						Key: {
-							index,
-							objectID: Item.objectID,
-						}
-					});
+			// if (response.Items?.length) {
+			// 	for (const Item of response.Items) {
+			// 		const dc = new DeleteCommand({
+			// 			TableName: "algolia_mock_objects",
+			// 			Key: {
+			// 				index,
+			// 				objectID: Item.objectID,
+			// 			}
+			// 		});
 		
-					await docClient.send(dc);
-				}
-			}
+			// 		await docClient.send(dc);
+			// 	}
+			// }
 
 		},
 
 		replaceObject: async ( index: string, object: any ) => {
 			console.log(`dynamodb.replaceObject( ${index}, ${object} )`)
 
-			// @todo: must create index if not exists
+			// // @todo: must create index if not exists
 
-			let { objectID } = object;
+			// let { objectID } = object;
 
-			if (!objectID) {
-				objectID = "generated_" + Math.random()*1000000000000;
-				object.objectID = objectID;
-			}
+			// if (!objectID) {
+			// 	objectID = "generated_" + Math.random()*1000000000000;
+			// 	object.objectID = objectID;
+			// }
 
-			const command = new PutCommand({
-				TableName: "algolia_mock objects",
-				Item: object,
-			});
+			// const command = new PutCommand({
+			// 	TableName: "algolia_mock objects",
+			// 	Item: object,
+			// });
 
-			try {
-				await docClient.send(command);
-				console.log ("dynamodb.replaceItem", object )
-			} catch (err: any) {
-				console.log("dynamodb.replaceItem", object, err)
-			}
+			// try {
+			// 	await docClient.send(command);
+			// 	console.log ("dynamodb.replaceItem", object )
+			// } catch (err: any) {
+			// 	console.log("dynamodb.replaceItem", object, err)
+			// }
 
-			return { objectID };
+			// return { objectID };
 		}
 	}
 }
