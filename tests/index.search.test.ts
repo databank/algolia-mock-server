@@ -475,16 +475,16 @@ describe("index.search()", () => {
 			],
 		});
 		console.log(JSON.stringify({ response14 }, null, "\t"))
+		const bondFacetName = response14.facets["authors.name"].Bond || response14.facets["authors.name"].BonD;
 		expect( response14.facets.att1.hello ).toBe(1);             // simple string
 		expect( response14.facets.bool.true ).toBe(1);              // boolean
 		expect( response14.facets.number["1"] ).toBe(1);            // number
 		expect( response14.facets["author.name"].James ).toBe(1);   // nested object
-		expect( response14.facets["authors.name"].Bond ).toBe(1);   // nested array
 		expect( response14.facets["this.is.sparta"].yey ).toBe(1);  // more complex case with object in array
+		expect( bondFacetName).toBe(2);                             // nested array
 
 
 		expect( response14.facets.nulled ).toBeUndefined()                  // null should not be faceted
-		//expect( response14.facets["authors.name"].BonD ).toBeUndefined();   // case insensitive, BonD counted in Bond
 
 		index.delete()
 
