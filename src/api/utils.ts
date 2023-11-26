@@ -329,3 +329,90 @@ export const applyFacetFiltersToAllObjects = ( objects: any[], facetFilters: any
 		return keep;
 	})
 }
+
+
+
+
+const extractValueFromObject = ( o:any, path:string ):any => {
+
+	if ( o === null || ["boolean", "number", "string"].includes(typeof o) )
+		return o;
+
+	if (Array.isArray(o)) {
+		// @todo: must check how Algolia behaves
+		return;
+	}
+
+	if (typeof o === "object") {
+
+		const objectAttributes = Object.keys(o);
+		if (objectAttributes.includes(path))
+			return o[path];
+
+		const [ k_left ] = path.split(".");
+		const   k_right = path.split(".").slice(1).join(".")
+
+		if ( path === k_left )
+			return;
+
+		if (!k_right)
+			return;
+
+		return extractValueFromObject( o[k_left], k_right )
+	}
+
+	return;
+
+}
+/*
+	[ ] use attributesForFaceting
+	[ ] intersect facts parameter
+	[ ] case sensitive facet values ?
+*/
+export const extractFacetsFromObjects = ( objects: any[], attributesForFacetingRaw: string[] ) => {
+	// populate facets
+	let facets:any = {}
+
+
+	const attributesForFaceting = extractAttributesForFaceting(attributesForFacetingRaw)
+
+	console.log({attributesForFaceting})
+
+
+	objects.map((Item) => {
+
+		Object.keys(attributesForFaceting).map((facetName:any) => {
+			
+			const facetValue = extractValueFromObject( Item, facetName )
+			console.log(facetName, "=", facetValue );
+
+			if (typeof facetValue === "string") {
+				if (!facets[facetName])
+					facets[facetName] = {}
+
+				if (!facets[facetName].hasOwnProperty(facetValue))
+					facets[facetName][facetValue] = 0;
+
+				facets[facetName][facetValue]++;
+			}
+
+// 			if (Array.isArray(Item[facetName])) {
+// 				Item[facetName].map((facetValue:any) => {
+// 					if (!facets[facetName])
+// 						facets[facetName] ={}
+
+// 					if (!facets[facetName].has0wnProperty(facetValue)) {
+// 						facets[facetName][facetValue] = 0
+// 					}
+					
+// 					facets[facetName][facetValue]++;
+// 				})
+// 			}
+		})
+	})
+
+
+
+	return facets;
+
+}

@@ -127,6 +127,7 @@ import {
 	applyUnretrievableAttributes, 
 	applyQueryTermToAllObjects,
 	applyFacetFiltersToAllObjects,
+	extractFacetsFromObjects,
 } from "../utils";
 
 export const searchRegex = /^\/1\/indexes\/(?<indexName>[^\/]+)\/query$/
@@ -171,13 +172,8 @@ export const searchPost = async (storage:any, { indexName }: any, event: any ) =
 	if (Array.isArray(facetFilters) && facetFilters.length )
 		objects = applyFacetFiltersToAllObjects( objects, facetFilters, attributesForFaceting || [] );
 
-
-
-
-
-
-
-
+	// count facets for remaining data
+	const facets = extractFacetsFromObjects(objects, attributesForFaceting || [] );
 
 
 
@@ -219,6 +215,7 @@ export const searchPost = async (storage:any, { indexName }: any, event: any ) =
 		body: JSON.stringify({
 			hits: objects,
 			nbHits,
+			facets,
 			page,
 			nbPages,
 			hitsPerPage,

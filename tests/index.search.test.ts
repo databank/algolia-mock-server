@@ -225,7 +225,7 @@ describe("index.search()", () => {
 
 	});
 
-	test('facetFilters', async () => {
+	test('facetFilters, facets', async () => {
 
 		const index = adminClient.initIndex('test-search-facetFilters');
 
@@ -442,8 +442,17 @@ describe("index.search()", () => {
 
 
 
+
+		/*
+
+		*/
+		const response13 = await index.search("", {});
+		console.log(JSON.stringify({ response13 }, null, "\t"))
+		//expect( response13.hits.length ).toBe(1);
+
+
+
 		index.delete()
 
 	})
-
 })
