@@ -339,8 +339,16 @@ const extractValueFromObject = ( o:any, path:string ):any => {
 		return o;
 
 	if (Array.isArray(o)) {
-		// @todo: must check how Algolia behaves
-		return;
+		let valueList: any[] = []
+		o.map((oValue) => {
+			let deepValue = extractValueFromObject(oValue, path )
+			if (Array.isArray(deepValue)) {
+				valueList = Array.from(new Set([ ...valueList, deepValue ])); // Algolia only countrs values once
+			} else {
+				valueList.push( deepValue )
+			}
+		})
+		return valueList;
 	}
 
 	if (typeof o === "object") {
@@ -365,30 +373,29 @@ const extractValueFromObject = ( o:any, path:string ):any => {
 
 }
 /*
-	[ ] use attributesForFaceting
-	[ ] intersect facts parameter
+	[x] use attributesForFaceting
+	[x] intersect facts parameter
 	[ ] case sensitive facet values ?
 */
-export const extractFacetsFromObjects = ( objects: any[], attributesForFacetingRaw: string[] ) => {
+export const extractFacetsFromObjects = ( objects: any[], attributesForFacetingRaw: string[], clientFacets: string[] ) => {
 	// populate facets
 	let facets:any = {}
 
-
 	const attributesForFaceting = extractAttributesForFaceting(attributesForFacetingRaw)
 
-	console.log({attributesForFaceting})
-
+	const retrievableFacets = Object.keys(attributesForFaceting).filter(clientFacet => clientFacets.includes(clientFacet));
 
 	objects.map((Item) => {
 
-		Object.keys(attributesForFaceting).map((facetName:any) => {
+		retrievableFacets.map((facetName:any) => {
 			
 			const facetValue = extractValueFromObject( Item, facetName )
 			console.log(facetName, "=", facetValue );
 
+			if (!facets[facetName])
+				facets[facetName] = {}
+
 			if (["string","boolean", "number"].includes(typeof facetValue)) {
-				if (!facets[facetName])
-					facets[facetName] = {}
 
 				if (!facets[facetName].hasOwnProperty(facetValue))
 					facets[facetName][facetValue.toString()] = 0;
@@ -397,18 +404,15 @@ export const extractFacetsFromObjects = ( objects: any[], attributesForFacetingR
 			}
 
 
-// 			if (Array.isArray(Item[facetName])) {
-// 				Item[facetName].map((facetValue:any) => {
-// 					if (!facets[facetName])
-// 						facets[facetName] ={}
+			if (Array.isArray(facetValue)) {
 
-// 					if (!facets[facetName].has0wnProperty(facetValue)) {
-// 						facets[facetName][facetValue] = 0
-// 					}
-					
-// 					facets[facetName][facetValue]++;
-// 				})
-// 			}
+				facetValue.map(( fv ) => {
+					if (!facets[facetName].hasOwnProperty(fv))
+						facets[facetName][fv.toString()] = 0;
+
+					facets[facetName][fv.toString()]++;
+				})
+			}
 		})
 	})
 

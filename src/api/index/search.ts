@@ -155,6 +155,7 @@ export const searchPost = async (storage:any, { indexName }: any, event: any ) =
 		hitsPerPage : clientHitsPerPage,
 		attributesToRetrieve,
 		facetFilters,
+		facets: clientFacets,
 	} = payload;
 
 	const indexSettings = await storage.getIndex( indexName );
@@ -173,10 +174,9 @@ export const searchPost = async (storage:any, { indexName }: any, event: any ) =
 		objects = applyFacetFiltersToAllObjects( objects, facetFilters, attributesForFaceting || [] );
 
 	// count facets for remaining data
-	const facets = extractFacetsFromObjects(objects, attributesForFaceting || [] );
-
-
-
+	let facets;
+	if ((clientFacets || []).length)
+		facets = extractFacetsFromObjects(objects, attributesForFaceting || [], clientFacets );
 
 
 	// attributesToRetrieve

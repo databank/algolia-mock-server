@@ -254,8 +254,15 @@ describe("index.search()", () => {
 						name: "Bond",
 					},
 					{
-						name: "Bond", // will Algolia count "Bond" twice ?
+						name: "Bond", // Algolia will count "Bond" only once
 					},
+					{
+						name: "BonD", // test Algolia facet value case behavior
+					},
+					{
+						name: "0.0.7",
+					},
+
 				],
 
 			},
