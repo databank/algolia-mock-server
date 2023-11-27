@@ -1,5 +1,4 @@
 name: canary-release
-run-name: 0.5.x
 
 on:
     push:

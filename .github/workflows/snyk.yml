@@ -1,4 +1,5 @@
 name: Snyk Security Check
+run-name: Snyk
 on: [push,pull_request]
 jobs:
   security:
