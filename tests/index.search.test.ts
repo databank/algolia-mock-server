@@ -489,4 +489,44 @@ describe("index.search()", () => {
 		index.delete()
 
 	})
+
+
+	test('distinct, attributeForDistinct', async () => {
+		const index = adminClient.initIndex('test-search-distinct');
+
+		await index.setSettings({
+			distinct: 1,
+			attributeForDistinct: "text",
+		}).wait()
+
+		await index.saveObjects([
+			{
+				objectID: "notext1",
+			},
+			{
+				objectID: "hello1",
+				text: "hello"
+			},
+			{
+				objectID: "world",
+				text: "world"
+			},
+			{
+				objectID: "hello2",
+				text: "hello"
+			},
+			{
+				objectID: "notext2",
+			},
+		]).wait()
+
+
+		const response0 = await adminIndex.search("", {});
+		console.log(JSON.stringify({response0}, null, "\t"))
+		const response1 = await adminIndex.search("", {distinct: true});
+		console.log(JSON.stringify({response1}, null, "\t"))
+
+
+		index.delete()
+	})
 })

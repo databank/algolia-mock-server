@@ -3,7 +3,17 @@
     "version": "0.5.0{RELEASE_CHANNEL}{GITHUB_RUN_NUMBER}",
     "description": "Algolia REST Api compatible server for unit tests",
     "author": "Adrian Praja",
+    "keywords": [
+        "algolia",
+        "mock",
+        "test",
+        "jest"
+    ],
     "license": "MIT",
+    "licenses": [{
+        "type": "MIT",
+        "url": "https://github.com/databank/algolia-mock-server/blob/main/LICENSE"
+    }],
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "dependencies": {},
