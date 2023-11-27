@@ -521,9 +521,9 @@ describe("index.search()", () => {
 		]).wait()
 
 
-		const response0 = await adminIndex.search("", {});
+		const response0 = await index.search("", {});
 		console.log(JSON.stringify({response0}, null, "\t"))
-		const response1 = await adminIndex.search("", {distinct: true});
+		const response1 = await index.search("", {distinct: true});
 		console.log(JSON.stringify({response1}, null, "\t"))
 
 
