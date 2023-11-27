@@ -147,7 +147,7 @@ describe("setSettings", () => {
 			distinct: 1,
 		}).wait()
 		settings = await adminIndex.getSettings()
-		console.log("1",JSON.stringify(settings, null, "\t"));
+		expect(settings.distinct).toBe(true)
 
 
 
@@ -157,8 +157,22 @@ describe("setSettings", () => {
 		settings = await adminIndex.getSettings()
 		expect(settings.distinct).toBe(99)
 
+		await adminIndex.setSettings({
+			distinct: false,
+			attributeForDistinct: "myattribute"
+		}).wait()
+		settings = await adminIndex.getSettings()
+		//expect(settings.attributeForDistinct).toBe("myattribute")
+		console.log("attributeForDistinct1",JSON.stringify(settings, null, "\t"));
 
-		// attributeForDistinct
+		await adminIndex.setSettings({
+			distinct: false,
+			attributeForDistinct: null
+		}).wait()
+		settings = await adminIndex.getSettings()
+		console.log("attributeForDistinct2",JSON.stringify(settings, null, "\t"));
+		
+
 	})
 
 	afterAll(async () => {

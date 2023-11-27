@@ -119,6 +119,7 @@ export const setSettings = async (storage:any, { indexName }: any, event:any ) =
 		attributesForFaceting,
 		hitsPerPage,
 		distinct: clientDistinct,
+		attributeForDistinct,
 	} = payload;
 
 	let distinct: boolean | number | undefined = false;
@@ -132,6 +133,7 @@ export const setSettings = async (storage:any, { indexName }: any, event:any ) =
 	if (typeof clientDistinct === "number") {
 		const distinctMap:any = {
 			"0": false,
+			"1": true,
 		}
 		distinct = distinctMap.hasOwnProperty(clientDistinct.toString()) ? distinctMap[ clientDistinct.toString() ] : clientDistinct;
 	}
@@ -141,6 +143,7 @@ export const setSettings = async (storage:any, { indexName }: any, event:any ) =
 		attributesToRetrieve,
 		unretrievableAttributes,
 		distinct,
+		attributeForDistinct,
 	}
 
 	if (Array.isArray(searchableAttributes)) {
