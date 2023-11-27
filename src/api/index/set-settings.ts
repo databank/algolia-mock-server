@@ -85,8 +85,8 @@
 			[ ] allowCompressionOfIntegerArray
 
 			// advanced
-			[*] attributeForDistinct
-			[*] distinct
+			[x] attributeForDistinct
+			[x] distinct
 			[ ] replaceSynonymsInHighlight
 			[ ] minProximity
 			[ ] responseFields
