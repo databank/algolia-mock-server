@@ -121,21 +121,26 @@ export const setSettings = async (storage:any, { indexName }: any, event:any ) =
 		distinct: clientDistinct,
 	} = payload;
 
+	let distinct: boolean | number | undefined = false;
+	if (!["number","boolean","undefined"].includes(typeof clientDistinct))
+		throw new Error("Invalid value for distinct")
 
-	console.log(payload, clientDistinct)
-	/*
-		distinct
-			true => true
-			0 => false
-			2 => 2
-			5 => 5 ???
-
-	*/
+	if (typeof clientDistinct === "boolean") {
+		distinct = clientDistinct
+	}
+	
+	if (typeof clientDistinct === "number") {
+		const distinctMap:any = {
+			"0": false,
+		}
+		distinct = distinctMap.hasOwnProperty(clientDistinct.toString()) ? distinctMap[ clientDistinct.toString() ] : clientDistinct;
+	}
 
 	const settings:any = {
 		hitsPerPage,
 		attributesToRetrieve,
 		unretrievableAttributes,
+		distinct,
 	}
 
 	if (Array.isArray(searchableAttributes)) {
