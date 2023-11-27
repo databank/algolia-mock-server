@@ -120,6 +120,16 @@ describe("setSettings", () => {
 		expect(settings.attributesForFaceting).toBe(null)
 	})
 
+	test('distinct, attributeForDistinct', async () => {
+		let settings;
+		await adminIndex.setSettings({
+			distinct: true,
+		}).wait()
+		settings = await adminIndex.getSettings()
+		//console.log(JSON.stringify(settings, null, "\t"));
+
+	})
+
 	afterAll(async () => {
 		await adminIndex.delete()
 	});
