@@ -17,6 +17,25 @@ export const extractFieldFromObject = ( object:any, attributeName:string ) => {
 	return {}
 }
 
+export const extractFieldValueFromObject = ( object:any, attributeName:string ): any => {
+
+	if (attributeName.split(".").length > 1) {
+		const [ k_left ] = attributeName.split(".");
+		const   k_right = attributeName.split(".").slice(1).join(".")
+
+		if (!object.hasOwnProperty(k_left))
+			return;
+
+		return extractFieldValueFromObject(object[k_left], k_right )
+	}
+
+	if (object.hasOwnProperty( attributeName )) {
+		return object[attributeName];
+	}
+
+	return;
+}
+
 export const applyAttributesToRetrieve = ( object: any, attributesToRetrieve: string[] ) => {
 	const attributesToRetrieveArr = [
 		...attributesToRetrieve,
@@ -330,6 +349,35 @@ export const applyFacetFiltersToAllObjects = ( objects: any[], facetFilters: any
 	})
 }
 
+
+
+export const applyDistinctToAllObjects = ( objects: any[], rawDistinct: boolean | number, attributeForDistinct: string ) => {
+
+	let uniques: string[] = []
+
+	return objects.filter((o) => {
+		let keep = true;
+
+
+		const value = extractFieldValueFromObject(o, attributeForDistinct )
+
+		if (value === null)
+			return keep;
+
+		if (["undefined"].includes(typeof value))
+			return keep;
+
+		if (["string"].includes(typeof value)) {
+			if (uniques.includes(typeof value + ":" + value.toString())) 
+				return false;
+			
+			uniques.push(typeof value + ":" + value.toString())
+			return true;
+		}
+
+		return keep;
+	})
+}
 
 
 

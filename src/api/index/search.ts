@@ -101,7 +101,7 @@
 			[ ] advancedSyntaxFeatures
 
 			// advanced
-			[ ] distinct
+			[*] distinct
 			[ ] getRankingInfo - https://www.algolia.com/doc/api-reference/api-parameters/getRankingInfo/
 			[ ] clickAnalytics
 			[ ] analytics
@@ -127,6 +127,7 @@ import {
 	applyUnretrievableAttributes, 
 	applyQueryTermToAllObjects,
 	applyFacetFiltersToAllObjects,
+	applyDistinctToAllObjects,
 	extractFacetsFromObjects,
 } from "../utils";
 
@@ -156,10 +157,17 @@ export const searchPost = async (storage:any, { indexName }: any, event: any ) =
 		attributesToRetrieve,
 		facetFilters,
 		facets: clientFacets,
+		distinct: clientDistinct,
 	} = payload;
 
 	const indexSettings = await storage.getIndex( indexName );
-	const { attributesToRetrieve: indexAttributesToRetrieve, unretrievableAttributes, attributesForFaceting } = indexSettings;
+	const { 
+		attributesToRetrieve: indexAttributesToRetrieve, 
+		unretrievableAttributes,
+		attributesForFaceting,
+		distinct,
+		attributeForDistinct,
+	} = indexSettings;
 
 	let objects = await storage.getAllObjects( indexName );
 
@@ -172,6 +180,12 @@ export const searchPost = async (storage:any, { indexName }: any, event: any ) =
 	// apply facetFilters
 	if (Array.isArray(facetFilters) && facetFilters.length )
 		objects = applyFacetFiltersToAllObjects( objects, facetFilters, attributesForFaceting || [] );
+
+	// apply distinct
+	if (distinct && attributeForDistinct && clientDistinct !== false) {
+		objects = applyDistinctToAllObjects( objects, distinct, attributeForDistinct )
+	}
+
 
 	// count facets for remaining data
 	let facets;

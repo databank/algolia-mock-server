@@ -123,6 +123,7 @@ export const setSettings = async (storage:any, { indexName }: any, event:any ) =
 	} = payload;
 
 	let distinct: boolean | number | undefined = false;
+
 	if (!["number","boolean","undefined"].includes(typeof clientDistinct))
 		throw new Error("Invalid value for distinct")
 
@@ -142,8 +143,11 @@ export const setSettings = async (storage:any, { indexName }: any, event:any ) =
 		hitsPerPage,
 		attributesToRetrieve,
 		unretrievableAttributes,
-		distinct,
 		attributeForDistinct,
+	}
+
+	if (clientDistinct !== undefined ) {
+		settings["distinct"] = distinct;
 	}
 
 	if (Array.isArray(searchableAttributes)) {

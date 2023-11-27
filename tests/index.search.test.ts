@@ -505,15 +505,24 @@ describe("index.search()", () => {
 			},
 			{
 				objectID: "hello1",
-				text: "hello"
+				text: "hello",
+				nested: {
+					text: "hello",
+				}
 			},
 			{
 				objectID: "world",
-				text: "world"
+				text: "world",
+				nested: {
+					text: "world",
+				}
 			},
 			{
 				objectID: "hello2",
-				text: "hello"
+				text: "hello",
+				nested: {
+					text: "hello",
+				}
 			},
 			{
 				objectID: "notext2",
@@ -522,9 +531,22 @@ describe("index.search()", () => {
 
 
 		const response0 = await index.search("", {});
-		console.log(JSON.stringify({response0}, null, "\t"))
+		expect( response0.hits.length).toBe(4)
+
 		const response1 = await index.search("", {distinct: true});
-		console.log(JSON.stringify({response1}, null, "\t"))
+		expect( response1.hits.length).toBe(4)
+
+		const response2= await index.search("", {distinct: false});
+		expect( response2.hits.length).toBe(5)
+
+		await index.setSettings({
+			attributeForDistinct: "nested.text",
+		}).wait()
+
+		const response5 = await index.search("", {});
+		expect( response5.hits.length).toBe(4)
+
+		//console.log(JSON.stringify({response5}, null, "\t"))
 
 
 		index.delete()
