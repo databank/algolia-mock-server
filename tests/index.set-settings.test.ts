@@ -132,21 +132,24 @@ describe("setSettings", () => {
 
 		await adminIndex.setSettings({
 			distinct: 0,
+			attributeForDistinct: "test",
 		}).wait()
 		settings = await adminIndex.getSettings()
 		console.log("0",JSON.stringify(settings, null, "\t"));
 
 		await adminIndex.setSettings({
-			distinct: 2,
+			distinct: false,
+			attributeForDistinct: "test",
 		}).wait()
 		settings = await adminIndex.getSettings()
-		console.log("2",JSON.stringify(settings, null, "\t"));
+		console.log("false",JSON.stringify(settings, null, "\t"));
+
 
 		await adminIndex.setSettings({
-			distinct: 5,
+			distinct: 99,
 		}).wait()
 		settings = await adminIndex.getSettings()
-		console.log("5",JSON.stringify(settings, null, "\t"));
+		console.log("99",JSON.stringify(settings, null, "\t"));
 	})
 
 	afterAll(async () => {

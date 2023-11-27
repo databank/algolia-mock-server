@@ -85,8 +85,8 @@
 			[ ] allowCompressionOfIntegerArray
 
 			// advanced
-			[ ] attributeForDistinct
-			[ ] distinct
+			[*] attributeForDistinct
+			[*] distinct
 			[ ] replaceSynonymsInHighlight
 			[ ] minProximity
 			[ ] responseFields
@@ -118,8 +118,19 @@ export const setSettings = async (storage:any, { indexName }: any, event:any ) =
 		searchableAttributes,
 		attributesForFaceting,
 		hitsPerPage,
+		distinct: clientDistinct,
 	} = payload;
 
+
+	console.log(payload, clientDistinct)
+	/*
+		distinct
+			true => true
+			0 => false
+			2 => 2
+			5 => 5 ???
+
+	*/
 
 	const settings:any = {
 		hitsPerPage,

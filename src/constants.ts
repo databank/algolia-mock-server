@@ -1,4 +1,12 @@
 
+export const distinctMap = {
+	"true": true,
+	//"false": ?
+	"0": false,
+	"2": 2,
+	"3": 3,
+	"4": 4,
+}
 
 // mock what Algolia is returning
 export const defaultHeaders = {
