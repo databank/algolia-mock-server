@@ -497,6 +497,96 @@ describe("client.multipleQueries", () => {
 		//console.log(JSON.stringify({ facets }, null, "\t"))
 	})
 
+	test('distinct, attributeForDistinct', async () => {
+		const indexName = 'test-multiple-queries-distinct';
+		const index = adminClient.initIndex(indexName);
+
+		await index.setSettings({
+			distinct: 1,
+			attributeForDistinct: "text",
+		}).wait()
+
+		await index.saveObjects([
+			{
+				objectID: "notext1",
+			},
+			{
+				objectID: "hello1",
+				text: "hello",
+				nested: {
+					text: "hello",
+				}
+			},
+			{
+				objectID: "world",
+				text: "world",
+				nested: {
+					text: "world",
+				}
+			},
+			{
+				objectID: "hello2",
+				text: "hello",
+				nested: {
+					text: "hello",
+				}
+			},
+			{
+				objectID: "notext2",
+			},
+		]).wait()
+
+
+		const queries = [
+			/*
+				if attribute is not defined in attributesForFaceting
+				it should just not match the filter
+			*/
+			{
+				indexName,
+				params: {
+				}
+			},
+			{
+				indexName,
+				params: {
+					distinct: true
+				}
+			},
+			{
+				indexName,
+				params: {
+					distinct: false
+				}
+			},
+			{
+				indexName,
+				params: {
+				}
+			},
+		]
+
+		const response:any = await adminClient.multipleQueries(queries);
+
+
+		expect( response.results[0].hits.length).toBe(4)
+		expect( response.results[1].hits.length).toBe(4)
+		expect( response.results[2].hits.length).toBe(5)
+
+		await index.setSettings({
+			attributeForDistinct: "nested.text",
+		}).wait()
+		const response2:any = await adminClient.multipleQueries(queries);
+
+
+		expect( response2.results[3].hits.length).toBe(4)
+		index.delete()
+
+
+
+	})
+
+
 	// @todo: test multipleQueries on inexistent index
 
 })

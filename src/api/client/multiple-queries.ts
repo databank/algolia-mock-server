@@ -100,7 +100,7 @@
 				[ ] advancedSyntaxFeatures
 
 				// advanced
-				[ ] distinct
+				[*] distinct
 				[ ] getRankingInfo
 				[ ] clickAnalytics
 				[ ] analytics
@@ -121,6 +121,7 @@ import {
 	applyUnretrievableAttributes, 
 	applyQueryTermToAllObjects,
 	applyFacetFiltersToAllObjects,
+	applyDistinctToAllObjects,
 	extractFacetsFromObjects
 } from "../utils";
 import { defaultHeaders, defaultHitsPerPage } from "../../constants";
@@ -158,7 +159,9 @@ export const multipleQueries = async (storage:any, { indexName }: any, event: an
 		const { 
 			attributesToRetrieve: indexAttributesToRetrieve, 
 			unretrievableAttributes, 
-			attributesForFaceting 
+			attributesForFaceting,
+			distinct,
+			attributeForDistinct,
 		} = indexSettings;
 
 		let qp:any = {}
@@ -176,6 +179,7 @@ export const multipleQueries = async (storage:any, { indexName }: any, event: an
 			hitsPerPage: clientHitsPerPage,
 			facetFilters: clientFacetFilters,
 			facets: clientFacets,
+			distinct: clientDistinct,
 		} = qp;
 		let facetFilters;
 		if (typeof clientFacetFilters === "string") {
@@ -197,7 +201,10 @@ export const multipleQueries = async (storage:any, { indexName }: any, event: an
 		if (Array.isArray(facetFilters) && facetFilters.length )
 			objects = applyFacetFiltersToAllObjects( objects, facetFilters, attributesForFaceting || [] );
 
-
+		// apply distinct
+		if (distinct && attributeForDistinct && clientDistinct !== 'false') { // yep distinct comes from client as "string"
+			objects = applyDistinctToAllObjects( objects, distinct, attributeForDistinct )
+		}
 
 		// attributesToRetrieve
 		if (attributesToRetrieve && typeof attributesToRetrieve !== "string" )
