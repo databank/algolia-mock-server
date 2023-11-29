@@ -538,10 +538,6 @@ describe("client.multipleQueries", () => {
 
 
 		const queries = [
-			/*
-				if attribute is not defined in attributesForFaceting
-				it should just not match the filter
-			*/
 			{
 				indexName,
 				params: {
@@ -568,7 +564,6 @@ describe("client.multipleQueries", () => {
 
 		const response:any = await adminClient.multipleQueries(queries);
 
-
 		expect( response.results[0].hits.length).toBe(4)
 		expect( response.results[1].hits.length).toBe(4)
 		expect( response.results[2].hits.length).toBe(5)
@@ -581,9 +576,6 @@ describe("client.multipleQueries", () => {
 
 		expect( response2.results[3].hits.length).toBe(4)
 		index.delete()
-
-
-
 	})
 
 
