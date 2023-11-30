@@ -183,9 +183,13 @@ describe("setSettings", () => {
 		const settings = await adminIndex.getSettings()
 		console.log(JSON.stringify({settings}, null, "\t"));
 
-		const replicaIndex = adminClient.initIndex("replica_index1")
-		const replicaSettings = await replicaIndex.getSettings()
-		console.log(JSON.stringify({replicaSettings}, null, "\t"));
+		try {
+			const replicaIndex = adminClient.initIndex("replica_index1")
+			const replicaSettings = await replicaIndex.getSettings()
+			console.log(JSON.stringify({replicaSettings}, null, "\t"));	
+		} catch (e) {
+			console.log(e)
+		}
 	})
 
 

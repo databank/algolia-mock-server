@@ -31,6 +31,11 @@ describe("getSettings", () => {
 		expect(settings).toStrictEqual(defaultIndexSettings)
 	})
 
+
+	// @todo: test non-existing index
+
+	// @todo: test replica
+
 	afterAll(async () => {
 		await index.delete()
 	});
