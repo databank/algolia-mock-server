@@ -24,7 +24,7 @@
 			[ ] ranking
 			[ ] customRanking
 			[ ] relevancyStrictness
-			[ ] replicas
+			[*] replicas
 
 			// faceting
 			[ ] maxValuesPerFacet
