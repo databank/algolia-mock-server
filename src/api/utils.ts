@@ -153,7 +153,7 @@ export const applyQueryTermToAllObjects = ( objects: any[], query: string ) => {
 
 
 const knownFacetFiltersFunc = [ "filterOnly", "afterDistinct", "searchable" ]
-const extractAttributesForFaceting = (attributesForFacetingRaw: string[] ) => {
+export const extractAttributesForFaceting = (attributesForFacetingRaw: string[] ) => {
 	const ret: any = {}
 	attributesForFacetingRaw
 		//.map( a => a.trim() ) // do not trim, Algolia does not trim
