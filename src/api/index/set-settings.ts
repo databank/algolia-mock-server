@@ -201,7 +201,11 @@ export const setSettings = async (storage:any, { indexName }: any, event:any ) =
 	// handle delete
 	for( const existingReplicaName of currentReplicas) {
 		if (!newleyProvidedReplicas.includes(existingReplicaName)) {
-
+			/*
+				Algolia does not delete the replica, 
+				it converts it into a primary index
+			*/
+			await storage.detachReplica(existingReplicaName)
 		}
 	}
 

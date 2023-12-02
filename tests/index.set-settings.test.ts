@@ -202,8 +202,18 @@ describe("setSettings", () => {
 		await adminIndex.setSettings({
 			replicas: ["replica_index2"], // remove replica_index1
 		}).wait()
+		const indexSettings = await adminIndex.getSettings()
 		const removedReplicaSettings = await replicaIndex.getSettings()
+		expect(Array.isArray( indexSettings.replicas)).toBe(true)
+		expect(indexSettings.replicas.includes("replica_index1")).toBe(false)
+
 		console.log(JSON.stringify({ removedReplicaSettings}, null, "\t"))
+		const indexResponse = await adminIndex.search("");
+		const replicaResponse = await replicaIndex.search("");
+
+		console.log(JSON.stringify({ indexResponse}, null, "\t"))
+		console.log(JSON.stringify({ replicaResponse}, null, "\t"))
+
 
 	})
 

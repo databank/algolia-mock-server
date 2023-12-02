@@ -54,6 +54,17 @@ export const mockStorageMemory = () => {
 			}
 
 		},
+		detachReplica: async ( replicaName: string ) => {
+			console.log(`memory.detachReplica( ${replicaName} )`)
+
+			if (!storage.hasOwnProperty( replicaName )) {
+				return;
+			}
+
+			delete storage[replicaName]._settings.primary;
+
+			// @todo: what to do with the items ?
+		},
 		getObject: async ( index:string, objectID:string ) => {
 			//console.log(`memory.getObject( ${index}, ${objectID} )`)
 
