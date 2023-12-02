@@ -578,6 +578,26 @@ describe("client.multipleQueries", () => {
 		index.delete()
 	})
 
+	test('replica', async () => {
+		const indexName = 'test-multiple-queries-replica';
+		const index = adminClient.initIndex(indexName);
+
+		let objects = new Array(30).fill(null).map((el,idx,arr)=> ({
+			"objectID": `obj_${idx}`,
+		}))
+		await index.saveObjects(objects).wait()
+		await index.setSettings({
+			replicas: ["multisearch-replica1"],
+		}).wait()
+		const queries = [
+			{
+				indexName: "multisearch-replica1",
+				//params: {}
+			},
+		]
+		const response:any = await adminClient.multipleQueries(queries);
+		expect( response.results[0].nbHits).toBe(30)
+	})
 
 	// @todo: test multipleQueries on inexistent index
 

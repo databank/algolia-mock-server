@@ -91,10 +91,12 @@ export const mockStorageMemory = () => {
 			if (!storage[index])
 				throw new Error("unknown index");
 
-			if (!storage[index]._items)
+			const { primary } = storage[index]._settings || {}
+
+			if (!storage[primary || index]._items)
 				return [];
 
-			return Object.values(storage[index]._items);
+			return Object.values(storage[primary || index]._items);
 		},
 
 		deleteObject: async ( index:string, objectID:string ) => {

@@ -551,4 +551,17 @@ describe("index.search()", () => {
 
 		index.delete()
 	})
+
+	test('replica', async () => {
+		const index = adminClient.initIndex('test-search-distinct');
+		await index.setSettings({
+			replicas: ["replica1"],
+		}).wait()
+		const replicaIndex = adminClient.initIndex("replica1")
+
+		const response0 = await replicaIndex.search("", {});
+
+		expect( response0.hits.length).toBe(5)
+//console.log(JSON.stringify({response0}, null, "\t"))
+	})
 })
