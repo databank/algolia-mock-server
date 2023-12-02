@@ -200,7 +200,7 @@ describe("setSettings", () => {
 
 		// remove one replica and check replica settings after
 		await adminIndex.setSettings({
-			replicas: ["replica_index1"],
+			replicas: ["replica_index2"], // remove replica_index1
 		}).wait()
 		const removedReplicaSettings = await replicaIndex.getSettings()
 		console.log(JSON.stringify({ removedReplicaSettings}, null, "\t"))
