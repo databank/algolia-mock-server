@@ -13,10 +13,9 @@ import { getSettingsRegex, getSettings } from "./api/index/get-settings";
 import { setSettingsRegex, setSettings } from "./api/index/set-settings";
 import { indexDeleteRegex, indexDelete } from "./api/index/delete";
 
-// import { query, queryRegex } from "./query";
-// import { searchForFacetValues, searchForFacetValuesRegex } from "…/searchForFacetValues"; 
+import { searchForFacetValues, searchForFacetValuesRegex } from "./api/index/search-for-facet-values"; 
 import { multipleQueries, multipleQueriesRegex } from "./api/client/multiple-queries"; 
-//import { clearobjects, clearobjectsRege } from "./clearobjects";
+
 
 export const rawHandler = async function ( event:any, storage:unknown) {
     const { path, httpMethod, body } = event;
@@ -68,11 +67,11 @@ export const rawHandler = async function ( event:any, storage:unknown) {
         return queryResponse;
     }
     
-    // if (httpMethod === "POST" && path.match(searchForFacetValuesRegex)) {
-    //     const queryResponse = await searchForFacetValues(path.match(searchForFacetValuesRegex).groups, body )
-    //     console.log("searchForFacetvalues() => ", queryresponse)
-    //     return queryResponse;
-    // }
+    if (httpMethod === "POST" && path.match(searchForFacetValuesRegex)) {
+        const queryResponse = await searchForFacetValues(storage, path.match(searchForFacetValuesRegex).groups, event )
+        // console.log("searchForFacetvalues() => ", queryResponse)
+        return queryResponse;
+    }
 
     if (httpMethod === "POST" && path.match(batchRegex)) {
         const batchResponse = await batch(storage, path.match(batchRegex).groups, body )
