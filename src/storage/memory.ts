@@ -32,6 +32,18 @@ export const mockStorageMemory = () => {
 				...settings,
 			}
 		},
+		createReplica: async ( replicaName: string, parentIndexName: string, settings: Record<string,any> ) => {
+
+			if (storage.hasOwnProperty( replicaName ))
+				throw new Error("")
+
+
+			storage[replicaName] = {
+				_settings: { ...settings, ...{ primary: parentIndexName }},
+				_items: {}, // primary index _items should be used anyways
+			}
+
+		},
 		getObject: async ( index:string, objectID:string ) => {
 			//console.log(`memory.getObject( ${index}, ${objectID} )`)
 

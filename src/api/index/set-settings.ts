@@ -177,6 +177,14 @@ export const setSettings = async (storage:any, { indexName }: any, event:any ) =
 
 	await storage.setIndexSettings( indexName, settings );
 
+	// create replica
+	if (Array.isArray(replicas)) {
+		replicas.map((r) => {
+			storage.createReplica( r, indexName, {})
+		})
+	}
+
+
 	return {
 		statusCode: 200,
 		headers: {

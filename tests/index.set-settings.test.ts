@@ -21,12 +21,13 @@ const client = algoliasearch( process.env.ALGOLIA_APPLICATION_ID || '', process.
 beforeAll(() => server.listen(3000));
 afterAll(() => server.close());
 
+const setSettingsIndexName = 'test-set-settings';
 
 describe("setSettings", () => {
 	let adminIndex:any;
 
 	beforeAll(async () => {
-		adminIndex = adminClient.initIndex('test-set-settings');
+		adminIndex = adminClient.initIndex(setSettingsIndexName);
 		await adminIndex.saveObjects([{objectID: "search1", att1: 1, att2: 2, att3: 3,},]).wait()
 	});
 
@@ -177,24 +178,24 @@ describe("setSettings", () => {
 			'replica_index1',
 			'replica_index2'
 		]
+		const searchableAttributes = ['attribute1,attribute2', 'attribute3',]
 		await adminIndex.setSettings({
-			searchableAttributes: [
-				'attribute1,attribute2', 'attribute3',
-			],
 			replicas,
+			// test if searchableAttributes is inherited by replica
+			searchableAttributes,
+			
 		}).wait()
 
 		const settings = await adminIndex.getSettings()
-		console.log(JSON.stringify({settings}, null, "\t"));
 		expect(settings.replicas).toStrictEqual(replicas)
+		expect(settings.searchableAttributes).toStrictEqual(searchableAttributes)
 
-		try {
-			const replicaIndex = adminClient.initIndex("replica_index1")
-			const replicaSettings = await replicaIndex.getSettings()
-			console.log(JSON.stringify({replicaSettings}, null, "\t"));	
-		} catch (e) {
-			console.log(e)
-		}
+
+		const replicaIndex = adminClient.initIndex("replica_index1")
+		const replicaSettings = await replicaIndex.getSettings()
+		expect(replicaSettings.replicas).toBeUndefined()
+		expect(replicaSettings.searchableAttributes).toBeUndefined()
+		expect(replicaSettings.primary).toBe(setSettingsIndexName)
 	})
 
 
