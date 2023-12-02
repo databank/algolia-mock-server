@@ -48,12 +48,14 @@ describe("index.searchForFacetValues()", () => {
 			searchableAttribute: "sa1",
 		}]).wait()
 
-		const inexistent_attribute_response = adminIndex.searchForFacetValues("inexistent", "");
-		console.log(JSON.stringify({inexistent_attribute_response}, null, "\t"))
+		try {
+			await adminIndex.searchForFacetValues("inexistent", "");
+		} catch (err:any) {
+			expect(err.name).toBe("ApiError")
+		}
 
-
-		const attribute1_response = await adminIndex.searchForFacetValues("attribute1", "");
-		console.log(JSON.stringify({attribute1_response}, null, "\t"))
+		const attribute_response = await adminIndex.searchForFacetValues("attribute", "");
+		console.log(JSON.stringify({attribute_response}, null, "\t"))
 
 		const nestedAttribute_response = await adminIndex.searchForFacetValues("nested.attribute", "");
 		console.log(JSON.stringify({nestedAttribute_response}, null, "\t"))

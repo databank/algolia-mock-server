@@ -1,29 +1,22 @@
 
 /*
 	https://www.algolia.com/doc/api-reference/api-methods/search-for-facet-values/
+	https://www.algolia.com/doc/rest-api/search/#search-for-facet-values
 
 	[ ] index settings
-			[x] attributesToRetrieve - index setting
-			[ ] attributesToRetrieve - nested eg: author.name
-			[ ] attributesToRetrieve: ['*', '-attribute1', '-attribute2' ] // retrieve all except
-			[ ] unretrievableAttributes
-			[ ] unretrievableAttributes - retrieve when authenticated with the admin API key
 
-			[ ] test unretrievable nested
 
 	[ ] parameters:
-			// attributes
-			[x] attributesToRetrieve - api parameter
-			[ ] attributesToRetrieve - nested eg: author.name
-			[ ] attributesToRetrieve: ['*', '-attribute1', '-attribute2' ] // retrieve all except
 
-
-			[ ] getRankingInfo
+	[ ] Response
+		[ ] 404: Index indexName doesn’t exist
+		[ ] 400: Cannot search in `<ATTRIBUTE>` attribute, you need to add `searchable(<ATTRIBUTE>)` to attributesForFaceting.
 */
 
 //const querystring = require('node:querystring');
 
 import { defaultHeaders } from "../../constants";
+import { extractAttributesForFaceting } from "../utils";
 
 export const searchForFacetValuesRegex = /^\/1\/indexes\/(?<indexName>[^\/]+)\/facets\/(?<facetName>[^\/]+)\/query$/;
 
@@ -44,9 +37,22 @@ export const searchForFacetValues = async (storage:any, { indexName, facetName }
 
 	const indexSettings = await storage.getIndex( indexName );
 	const { 
-		attributesForFaceting,
+		attributesForFaceting: attributesForFacetingRaw,
 	} = indexSettings;
 
+	const attributesForFaceting = extractAttributesForFaceting(attributesForFacetingRaw)
+	console.log(attributesForFaceting)
+	if (!attributesForFaceting.hasOwnProperty(facetName))
+		return {
+			statusCode: 400,
+			headers: {
+				...defaultHeaders,
+			},
+			body: JSON.stringify({
+				"message": `Cannot search in \`${facetName}\` attribute, you need to add \`searchable(${facetName})\` to attributesForFaceting.`,
+				"status": 400,
+			})
+		}
 
 	let objects = await storage.getAllObjects( indexName );
 
