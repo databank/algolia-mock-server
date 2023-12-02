@@ -553,7 +553,10 @@ describe("index.search()", () => {
 	})
 
 	test('replica', async () => {
-		const index = adminClient.initIndex('test-search-distinct');
+		const index = adminClient.initIndex('test-search-replica');
+		let objects = new Array(30).fill(null).map((el,idx,arr)=> ({"objectID": `obj_${idx}`,}))
+		await index.saveObjects(objects).wait()
+
 		await index.setSettings({
 			replicas: ["replica1"],
 		}).wait()
@@ -561,7 +564,7 @@ describe("index.search()", () => {
 
 		const response0 = await replicaIndex.search("", {});
 
-		expect( response0.hits.length).toBe(5)
-//console.log(JSON.stringify({response0}, null, "\t"))
+		expect( response0.nbHits).toBe(30)
+		index.delete()
 	})
 })
