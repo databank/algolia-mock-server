@@ -194,7 +194,7 @@ describe("setSettings", () => {
 		const replicaIndex = adminClient.initIndex("replica_index1")
 		const replicaSettings = await replicaIndex.getSettings()
 		expect(replicaSettings.replicas).toBeUndefined()
-		expect(replicaSettings.searchableAttributes).toBeUndefined()
+		expect(replicaSettings.searchableAttributes).toBeNull()
 		expect(replicaSettings.primary).toBe(setSettingsIndexName)
 	})
 
