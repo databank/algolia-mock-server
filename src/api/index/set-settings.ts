@@ -120,6 +120,7 @@ export const setSettings = async (storage:any, { indexName }: any, event:any ) =
 		hitsPerPage,
 		distinct: clientDistinct,
 		attributeForDistinct,
+		replicas,
 	} = payload;
 
 	let distinct: boolean | number | undefined = false;
@@ -168,6 +169,11 @@ export const setSettings = async (storage:any, { indexName }: any, event:any ) =
 		}
 	}
 	
+	if (Array.isArray(replicas)) {
+		settings.replicas = replicas;
+	}
+	//"primary": "test-set-settings",
+
 
 	await storage.setIndexSettings( indexName, settings );
 

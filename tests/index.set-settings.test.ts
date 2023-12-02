@@ -173,15 +173,20 @@ describe("setSettings", () => {
 	})
 
 	test('replicas', async () => {
+		const replicas = [
+			'replica_index1',
+			'replica_index2'
+		]
 		await adminIndex.setSettings({
-			replicas: [
-				'replica_index1',
-				'replica_index2'
-			]
+			searchableAttributes: [
+				'attribute1,attribute2', 'attribute3',
+			],
+			replicas,
 		}).wait()
 
 		const settings = await adminIndex.getSettings()
 		console.log(JSON.stringify({settings}, null, "\t"));
+		expect(settings.replicas).toStrictEqual(replicas)
 
 		try {
 			const replicaIndex = adminClient.initIndex("replica_index1")
