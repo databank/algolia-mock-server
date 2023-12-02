@@ -8,8 +8,8 @@
 			[x] throw error if non-existent in attributesForFaceting
 			[x] throw error if non-searcahble
 			[ ] support nested
-			[ ] support boolean
-			[ ] support number
+			[x] support boolean
+			[x] support number
 
 	[ ] parameters:
 		[x] facetName

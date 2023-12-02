@@ -62,8 +62,8 @@ test('TestMyFunction', async () => {
 
 ### Algolia Client Coverage (npm `algoliasearch`)
 
-- [*] `index.search()` - partial
-- [ ] `index.searchForFacetValues()`
+- [x] `index.search()` - partial
+- [x] `index.searchForFacetValues()` - partial
 - [ ] `index.findObject()`
 - [ ] `index.getObjectPosition()`
 - [x] `index.getObject()`
@@ -76,7 +76,7 @@ test('TestMyFunction', async () => {
 - [x] `index.deleteObjects()`
 - [ ] `index.deleteBy()`
 - [x] `index.clearObjects()`
-- [*] `index.batch()` - partial
+- [x] `index.batch()` - partial
 
 - [ ] `index.saveSynonym()`
 - [ ] `index.replaceAllSynonyms()`
@@ -90,11 +90,11 @@ test('TestMyFunction', async () => {
 - [ ] `index.clearRules()`
 
 - [x] `index.getSettings()`
-- [*] `index.setSettings()` - partial
+- [x] `index.setSettings()` - partial
 
 - [x] `index.delete()`
 
-- [*] `client.multipleQueries()` - partial
+- [x] `client.multipleQueries()` - partial
 - [ ] `client.multipleGetObjects()`
 - [ ] `client.moveIndex()`
 - [ ] `client.copyIndex()`
@@ -111,15 +111,15 @@ test('TestMyFunction', async () => {
 
 - [ ] Index
   - [x] Get Settings
-  - [*] Set Settings - partial
-- [ ] Search
-- [ ] Search for facet values
+  - [x] Set Settings - partial
+- [x] Search - partial
+- [x] Search for facet values - partial
 - [ ] Browse index
 - [ ] Single object operations
   - [x] Get Object `index.getObject()`
     - [x] support for `attributesToRetrieve`
     - [ ] nested `attributesToRetrieve` eg. invoice.lines.*.name
-    - [*] skip `unretrievableAttributes` - skipping nested attributes still in progress
+    - [x] skip `unretrievableAttributes` - skipping nested attributes still in progress
   - [ ] Delete object
 - [ ] Multi object operations
   - [ ] Add/Replace Object
@@ -137,5 +137,5 @@ test('TestMyFunction', async () => {
   - [ ] Batch write operations - multiple indexes
   - [x] Get objects
 - [ ] Multi index operations
-	[*] Search multiple indexes - partial
+	[x] Search multiple indexes - partial
      

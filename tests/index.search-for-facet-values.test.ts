@@ -37,7 +37,7 @@ describe("index.searchForFacetValues()", () => {
 				'searchable(booleanAttribute)',
 				'searchable(numberAttribute)',
 				
-				// can it be filterOnly and searchable ?
+				
 
 			]
 		}).wait()
@@ -109,8 +109,9 @@ describe("index.searchForFacetValues()", () => {
 
 
 
-
-
+		// @todo: 
+		//    can it be filterOnly and searchable ?
+		//    can it be distinct and searchable ?
 
 		await adminIndex.delete()
 	});
