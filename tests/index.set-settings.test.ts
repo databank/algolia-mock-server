@@ -206,8 +206,12 @@ describe("setSettings", () => {
 		const removedReplicaSettings = await replicaIndex.getSettings()
 		expect(Array.isArray( indexSettings.replicas)).toBe(true)
 		expect(indexSettings.replicas.includes("replica_index1")).toBe(false)
-
 		console.log(JSON.stringify({ removedReplicaSettings}, null, "\t"))
+
+		// check response after detach, are items mirrored or duplicated on detach
+		await adminIndex.saveObjects([{objectID: "search2",},]).wait() 
+
+		
 		const indexResponse = await adminIndex.search("");
 		const replicaResponse = await replicaIndex.search("");
 
