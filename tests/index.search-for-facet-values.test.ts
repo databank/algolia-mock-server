@@ -28,6 +28,8 @@ describe("index.searchForFacetValues()", () => {
 			attributesForFaceting: [
 				//inexistent
 				'non_searchable_attribute',
+				'filterOnly(filterOnlyAttribute)',
+				'afterDistinct(afterDistinctAttribute)',
 
 				// must be searchable to be able to search for facet values
 				'searchable(attribute)',
@@ -35,9 +37,8 @@ describe("index.searchForFacetValues()", () => {
 				'searchable(booleanAttribute)',
 				'searchable(numberAttribute)',
 				
-				// 
-				'filterOnly(filterOnlyAttribute)',
-				'afterDistinct(afterDistinctAttribute)',
+				// can it be filterOnly and searchable ?
+
 			]
 		}).wait()
 		await adminIndex.saveObjects([{
@@ -48,9 +49,6 @@ describe("index.searchForFacetValues()", () => {
 			},
 			booleanAttribute: true,
 			numberAttribute: 1,
-			filterOnlyAttribute: "foa",
-			afterDistinctAttribute: "ad1",
-			searchableAttribute: "sa1",
 		}]).wait()
 
 		try {
@@ -65,31 +63,52 @@ describe("index.searchForFacetValues()", () => {
 			expect(err.name).toBe("ApiError")
 		}
 
-		const attribute_response = await adminIndex.searchForFacetValues("attribute", "");
-		console.log(JSON.stringify({attribute_response}, null, "\t"))
+		try {
+			await adminIndex.searchForFacetValues("filterOnlyAttribute", "");
+		} catch (err:any) {
+			expect(err.name).toBe("ApiError")
+		}
 
-		const nestedAttribute_response = await adminIndex.searchForFacetValues("nested.attribute", "");
-		console.log(JSON.stringify({nestedAttribute_response}, null, "\t"))
+		try {
+			await adminIndex.searchForFacetValues("afterDistinctAttribute", "");
+		} catch (err:any) {
+			expect(err.name).toBe("ApiError")
+		}
+
+
+		const attribute_response = await adminIndex.searchForFacetValues("attribute", "");
+		expect(attribute_response.facetHits.pop()).toStrictEqual({
+			value: "a1",
+			highlighted: "a1",
+			count: 1
+		})
+
+		// nested not working for now
+		// const nestedAttribute_response = await adminIndex.searchForFacetValues("nested.attribute", "");
+		// expect(nestedAttribute_response.facetHits.pop()).toStrictEqual({
+		// 	value: "na1",
+		// 	highlighted: "na1",
+		// 	count: 1
+		// })
 
 		const booleanAttribute_response = await adminIndex.searchForFacetValues("booleanAttribute", "");
-		console.log(JSON.stringify({booleanAttribute_response}, null, "\t"))
+		expect(booleanAttribute_response.facetHits.pop()).toStrictEqual({
+			value: "true",
+			highlighted: "true",
+			count: 1
+		})
+
 
 		const numberAttribute_response = await adminIndex.searchForFacetValues("numberAttribute", "");
-		console.log(JSON.stringify({numberAttribute_response}, null, "\t"))
+		expect(numberAttribute_response.facetHits.pop()).toStrictEqual({
+			value: "1",
+			highlighted: "1",
+			count: 1
+		})
 
-		try {
-			const filterOnlyAttribute_response = await adminIndex.searchForFacetValues("filterOnlyAttribute", "");
-			console.log(JSON.stringify({filterOnlyAttribute_response}, null, "\t"))	
-		} catch (err) {
-			console.log(err)
-		}
 
-		try {
-			const afterDistinctAttribute_response = await adminIndex.searchForFacetValues("afterDistinctAttribute", "");
-			console.log(JSON.stringify({afterDistinctAttribute_response}, null, "\t"))	
-		} catch (err) {
-			console.log(err)
-		}
+
+
 
 
 

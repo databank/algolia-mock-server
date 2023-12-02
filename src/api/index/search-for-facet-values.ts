@@ -4,9 +4,16 @@
 	https://www.algolia.com/doc/rest-api/search/#search-for-facet-values
 
 	[ ] index settings
-
+		[ ] attributesForFaceting
+			[x] throw error if non-existent in attributesForFaceting
+			[x] throw error if non-searcahble
+			[ ] support nested
+			[ ] support boolean
+			[ ] support number
 
 	[ ] parameters:
+		[x] facetName
+		[ ] facetQuery
 
 	[ ] Response
 		[ ] 404: Index indexName doesn’t exist
@@ -27,13 +34,13 @@ export const searchForFacetValues = async (storage:any, { indexName, facetName }
 	let results = []
 
 	const payload = JSON.parse(body);
-	console.log ("body", body);
+	//console.log ("body", body);
 	
-	console.log("searchForFacetValues", JSON.stringify({
-		indexName, 
-		facetName, 
-		payload,
-	}, null, "\t"));
+	// console.log("searchForFacetValues", JSON.stringify({
+	// 	indexName, 
+	// 	facetName, 
+	// 	payload,
+	// }, null, "\t"));
 
 	const indexSettings = await storage.getIndex( indexName );
 	const { 
@@ -41,7 +48,7 @@ export const searchForFacetValues = async (storage:any, { indexName, facetName }
 	} = indexSettings;
 
 	const attributesForFaceting = extractAttributesForFaceting(attributesForFacetingRaw)
-	console.log(attributesForFaceting)
+	//console.log(attributesForFaceting)
 
 	if (!attributesForFaceting.hasOwnProperty(facetName))
 		return {
@@ -69,39 +76,41 @@ export const searchForFacetValues = async (storage:any, { indexName, facetName }
 
 	let objects = await storage.getAllObjects( indexName );
 
-	// apply filters
+	// apply text filters ?
 
 	// populate facets
 	let facets:any = {}
-	if (Array.isArray(attributesForFaceting)) {
-		objects?.map((Item:any) => {
-			attributesForFaceting.map( (facetName:any) => {
-				if (typeof Item[facetName] === "string") {
+	objects?.map((Item:any) => {
+		Object.keys(attributesForFaceting).map( (facetName:any) => {
+			const facetValue = Item[facetName];
+
+			if (["string","boolean","number"].includes(typeof facetValue)) {
+
+				if (!facets[facetName])
+					facets[facetName] = {}
+
+				if (!facets[facetName].hasOwnProperty(facetValue.toString())) {
+					facets[facetName][facetValue.toString()] = 0;
+				}
+				
+				facets[facetName][facetValue.toString()]++;
+				return;
+			}
+
+			if (Array.isArray(facetValue)) {
+				facetValue.map((facetValue:any) => {
 					if (!facets[facetName])
-						facets [facetName] = {}
+						facets[facetName] = {}
 
-					if (!facets[facetName].hasOwnProperty (Item[facetName])) {
-						facets[facetName][Item[facetName]] = 0;
+					if (!facets[facetName].hasOwnProperty(facetValue)) {
+						facets[facetName][facetValue] = 0;
 					}
-					
-					facets[facetName][Item[facetName]]++;
-				}
 
-				if (Array.isArray(Item[facetName])) {
-					Item[facetName].map((facetValue:any) => {
-						if (!facets[facetName])
-							facets[facetName] = {}
-
-						if (!facets[facetName].hasOwnProperty(facetValue)) {
-							facets[facetName][facetValue] = 0;
-						}
-
-						facets[facetName][facetValue]++;
-					})
-				}
-			})
+					facets[facetName][facetValue]++;
+				})
+			}
 		})
-	}
+	})
 
 	let facetHits:any = [];
 	if (facets[facetName]) {
