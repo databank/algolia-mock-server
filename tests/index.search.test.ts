@@ -551,4 +551,20 @@ describe("index.search()", () => {
 
 		index.delete()
 	})
+
+	test('replica', async () => {
+		const index = adminClient.initIndex('test-search-replica');
+		let objects = new Array(30).fill(null).map((el,idx,arr)=> ({"objectID": `obj_${idx}`,}))
+		await index.saveObjects(objects).wait()
+
+		await index.setSettings({
+			replicas: ["replica1"],
+		}).wait()
+		const replicaIndex = adminClient.initIndex("replica1")
+
+		const response0 = await replicaIndex.search("", {});
+
+		expect( response0.nbHits).toBe(30)
+		index.delete()
+	})
 })

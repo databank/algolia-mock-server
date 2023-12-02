@@ -15,6 +15,14 @@ export const mockStorageMemory = () => {
 
 			return storage[index]._settings;
 		},
+		indexExists: async ( index: string ) => {
+			//console.log(`memory.indexExists( ${index} )`)
+
+			if (!storage[index])
+				return false
+
+			return storage[index]._settings;
+		},
 		setIndexSettings: async ( index: string, settings:any ) => {
 			//console.log(`memory.setIndexSettings( ${index}, ${JSON.stringify(settings)} )`)
 
@@ -31,6 +39,37 @@ export const mockStorageMemory = () => {
 				...storage[index]._settings,
 				...settings,
 			}
+		},
+		createReplica: async ( replicaName: string, parentIndexName: string, settings: Record<string,any> ) => {
+
+			if (storage.hasOwnProperty( replicaName )) {
+				return;
+				throw new Error("")
+			}
+
+
+			storage[replicaName] = {
+				_settings: { ...settings, ...{ primary: parentIndexName }},
+				_items: {}, // primary index _items should be used anyways
+			}
+
+		},
+		detachReplica: async ( replicaName: string ) => {
+			//console.log(`memory.detachReplica( ${replicaName} )`)
+
+			if (!storage.hasOwnProperty( replicaName )) {
+				return;
+			}
+
+			const { primary: primaryIndexName } = storage[replicaName]._settings || {}
+
+			if (!storage.hasOwnProperty( primaryIndexName )) {
+				return;
+			}
+
+			// on detach, items are duplicated
+			delete storage[replicaName]._settings.primary;
+			storage[replicaName]._items = JSON.parse(JSON.stringify(storage[primaryIndexName]._items || {}))
 		},
 		getObject: async ( index:string, objectID:string ) => {
 			//console.log(`memory.getObject( ${index}, ${objectID} )`)
@@ -52,10 +91,12 @@ export const mockStorageMemory = () => {
 			if (!storage[index])
 				throw new Error("unknown index");
 
-			if (!storage[index]._items)
+			const { primary } = storage[index]._settings || {}
+
+			if (!storage[primary || index]._items)
 				return [];
 
-			return Object.values(storage[index]._items);
+			return Object.values(storage[primary || index]._items);
 		},
 
 		deleteObject: async ( index:string, objectID:string ) => {

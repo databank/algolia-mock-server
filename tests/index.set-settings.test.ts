@@ -21,12 +21,13 @@ const client = algoliasearch( process.env.ALGOLIA_APPLICATION_ID || '', process.
 beforeAll(() => server.listen(3000));
 afterAll(() => server.close());
 
+const setSettingsIndexName = 'test-set-settings';
 
 describe("setSettings", () => {
 	let adminIndex:any;
 
 	beforeAll(async () => {
-		adminIndex = adminClient.initIndex('test-set-settings');
+		adminIndex = adminClient.initIndex(setSettingsIndexName);
 		await adminIndex.saveObjects([{objectID: "search1", att1: 1, att2: 2, att3: 3,},]).wait()
 	});
 
@@ -171,6 +172,52 @@ describe("setSettings", () => {
 		settings = await adminIndex.getSettings()
 		expect(settings.attributeForDistinct).toBe(null)
 	})
+
+	test('replicas', async () => {
+		const replicas = [
+			'replica_index1',
+			'replica_index2'
+		]
+		const searchableAttributes = ['attribute1,attribute2', 'attribute3',]
+		await adminIndex.setSettings({
+			replicas,
+			// test if searchableAttributes is inherited by replica
+			searchableAttributes,
+			
+		}).wait()
+
+		const settings = await adminIndex.getSettings()
+		expect(settings.replicas).toStrictEqual(replicas)
+		expect(settings.searchableAttributes).toStrictEqual(searchableAttributes)
+
+
+		const replicaIndex = adminClient.initIndex("replica_index1")
+		const replicaSettings = await replicaIndex.getSettings()
+		expect(replicaSettings.replicas).toBeUndefined()
+		expect(replicaSettings.searchableAttributes).toBeNull()
+		expect(replicaSettings.primary).toBe(setSettingsIndexName)
+
+
+		// remove one replica and check replica settings after
+		await adminIndex.setSettings({
+			replicas: ["replica_index2"], // remove replica_index1
+		}).wait()
+		const indexSettings = await adminIndex.getSettings()
+		const removedReplicaSettings = await replicaIndex.getSettings()
+		expect(Array.isArray( indexSettings.replicas)).toBe(true)
+		expect(indexSettings.replicas.includes("replica_index1")).toBe(false)
+
+		// items are duplicated on detach
+		await adminIndex.saveObjects([{objectID: "search2",},]).wait() 
+
+		
+		const indexResponse = await adminIndex.search("");
+		const replicaResponse = await replicaIndex.search("");
+
+		expect(indexResponse.hits.length).toBe(2)
+		expect(replicaResponse.hits.length).toBe(1)
+	})
+
 
 	afterAll(async () => {
 		await adminIndex.delete()
