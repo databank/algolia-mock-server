@@ -180,6 +180,7 @@ export const setSettings = async (storage:any, { indexName }: any, event:any ) =
 	// create replica
 	if (Array.isArray(replicas)) {
 		replicas.map((r) => {
+			// @todo: handle create/update/delete
 			storage.createReplica( r, indexName, {
 				searchableAttributes: null,
 			})

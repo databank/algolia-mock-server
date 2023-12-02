@@ -34,8 +34,10 @@ export const mockStorageMemory = () => {
 		},
 		createReplica: async ( replicaName: string, parentIndexName: string, settings: Record<string,any> ) => {
 
-			if (storage.hasOwnProperty( replicaName ))
+			if (storage.hasOwnProperty( replicaName )) {
+				return;
 				throw new Error("")
+			}
 
 
 			storage[replicaName] = {
