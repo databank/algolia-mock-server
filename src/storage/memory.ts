@@ -15,6 +15,14 @@ export const mockStorageMemory = () => {
 
 			return storage[index]._settings;
 		},
+		indexExists: async ( index: string ) => {
+			//console.log(`memory.indexExists( ${index} )`)
+
+			if (!storage[index])
+				return false
+
+			return storage[index]._settings;
+		},
 		setIndexSettings: async ( index: string, settings:any ) => {
 			//console.log(`memory.setIndexSettings( ${index}, ${JSON.stringify(settings)} )`)
 

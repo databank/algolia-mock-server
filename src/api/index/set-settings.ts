@@ -175,16 +175,34 @@ export const setSettings = async (storage:any, { indexName }: any, event:any ) =
 	//"primary": "test-set-settings",
 
 
+	const indexSettings = await storage.indexExists( indexName );
+	const currentReplicas = (indexSettings || {}).replicas || [];
+
 	await storage.setIndexSettings( indexName, settings );
 
-	// create replica
-	if (Array.isArray(replicas)) {
-		replicas.map((r) => {
-			// @todo: handle create/update/delete
-			storage.createReplica( r, indexName, {
+	const newleyProvidedReplicas = replicas || [];
+
+	// handle create and update
+	for( const newReplicaName of newleyProvidedReplicas) {
+
+		/*
+			check if replica exists either against index.replicas 
+			or storage.indexExists( newReplicaName );
+		*/
+		if (currentReplicas.includes(newReplicaName)) {
+			// 
+		} else {
+			// create
+			storage.createReplica( newReplicaName, indexName, {
 				searchableAttributes: null,
 			})
-		})
+		}
+	}
+	// handle delete
+	for( const existingReplicaName of currentReplicas) {
+		if (!newleyProvidedReplicas.includes(existingReplicaName)) {
+
+		}
 	}
 
 
