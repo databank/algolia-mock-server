@@ -26,13 +26,18 @@ describe("index.searchForFacetValues()", () => {
 		const adminIndex = adminClient.initIndex('test-searchForFacetValues-1');
 		await adminIndex.setSettings({
 			attributesForFaceting: [
-				'attribute',
-				'nested.attribute',
-				'booleanAttribute',
-				'numberAttribute',
+				//inexistent
+				'non_searchable_attribute',
+
+				// must be searchable to be able to search for facet values
+				'searchable(attribute)',
+				'searchable(nested.attribute)',
+				'searchable(booleanAttribute)',
+				'searchable(numberAttribute)',
+				
+				// 
 				'filterOnly(filterOnlyAttribute)',
 				'afterDistinct(afterDistinctAttribute)',
-				'searchable (searchableAttribute)',
 			]
 		}).wait()
 		await adminIndex.saveObjects([{
@@ -54,6 +59,12 @@ describe("index.searchForFacetValues()", () => {
 			expect(err.name).toBe("ApiError")
 		}
 
+		try {
+			await adminIndex.searchForFacetValues("non_searchable_attribute", "");
+		} catch (err:any) {
+			expect(err.name).toBe("ApiError")
+		}
+
 		const attribute_response = await adminIndex.searchForFacetValues("attribute", "");
 		console.log(JSON.stringify({attribute_response}, null, "\t"))
 
@@ -66,14 +77,21 @@ describe("index.searchForFacetValues()", () => {
 		const numberAttribute_response = await adminIndex.searchForFacetValues("numberAttribute", "");
 		console.log(JSON.stringify({numberAttribute_response}, null, "\t"))
 
-		const filterOnlyAttribute_response = await adminIndex.searchForFacetValues("filterOnlyAttribute", "");
-		console.log(JSON.stringify({filterOnlyAttribute_response}, null, "\t"))
+		try {
+			const filterOnlyAttribute_response = await adminIndex.searchForFacetValues("filterOnlyAttribute", "");
+			console.log(JSON.stringify({filterOnlyAttribute_response}, null, "\t"))	
+		} catch (err) {
+			console.log(err)
+		}
 
-		const afterDistinctAttribute_response = await adminIndex.searchForFacetValues("afterDistinctAttribute", "");
-		console.log(JSON.stringify({afterDistinctAttribute_response}, null, "\t"))
+		try {
+			const afterDistinctAttribute_response = await adminIndex.searchForFacetValues("afterDistinctAttribute", "");
+			console.log(JSON.stringify({afterDistinctAttribute_response}, null, "\t"))	
+		} catch (err) {
+			console.log(err)
+		}
 
-		const searchableAttribute_response = await adminIndex.searchForFacetValues("searchableAttribute", "");
-		console.log(JSON.stringify({searchableAttribute_response}, null, "\t"))
+
 
 		await adminIndex.delete()
 	});

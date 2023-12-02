@@ -42,7 +42,20 @@ export const searchForFacetValues = async (storage:any, { indexName, facetName }
 
 	const attributesForFaceting = extractAttributesForFaceting(attributesForFacetingRaw)
 	console.log(attributesForFaceting)
+
 	if (!attributesForFaceting.hasOwnProperty(facetName))
+		return {
+			statusCode: 400,
+			headers: {
+				...defaultHeaders,
+			},
+			body: JSON.stringify({
+				"message": `Cannot search in \`${facetName}\` attribute, you need to add \`searchable(${facetName})\` to attributesForFaceting.`,
+				"status": 400,
+			})
+		}
+
+	if (!attributesForFaceting[facetName].searchable)
 		return {
 			statusCode: 400,
 			headers: {
