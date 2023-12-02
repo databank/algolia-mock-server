@@ -196,6 +196,15 @@ describe("setSettings", () => {
 		expect(replicaSettings.replicas).toBeUndefined()
 		expect(replicaSettings.searchableAttributes).toBeNull()
 		expect(replicaSettings.primary).toBe(setSettingsIndexName)
+
+
+		// remove one replica and check replica settings after
+		await adminIndex.setSettings({
+			replicas: ["replica_index1"],
+		}).wait()
+		const removedReplicaSettings = await replicaIndex.getSettings()
+		console.log(JSON.stringify({ removedReplicaSettings}, null, "\t"))
+
 	})
 
 
