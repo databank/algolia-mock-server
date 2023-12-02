@@ -55,15 +55,21 @@ export const mockStorageMemory = () => {
 
 		},
 		detachReplica: async ( replicaName: string ) => {
-			console.log(`memory.detachReplica( ${replicaName} )`)
+			//console.log(`memory.detachReplica( ${replicaName} )`)
 
 			if (!storage.hasOwnProperty( replicaName )) {
 				return;
 			}
 
-			delete storage[replicaName]._settings.primary;
+			const { primary: primaryIndexName } = storage[replicaName]._settings || {}
 
-			// @todo: what to do with the items ?
+			if (!storage.hasOwnProperty( primaryIndexName )) {
+				return;
+			}
+
+			// on detach, items are duplicated
+			delete storage[replicaName]._settings.primary;
+			storage[replicaName]._items = JSON.parse(JSON.stringify(storage[primaryIndexName]._items || {}))
 		},
 		getObject: async ( index:string, objectID:string ) => {
 			//console.log(`memory.getObject( ${index}, ${objectID} )`)
